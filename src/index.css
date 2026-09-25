@@ -1,1 +1,19 @@
 @import "tailwindcss";
+
+@theme {
+  /* Font */
+  --font-sans: "Inter", sans-serif;
+
+  /* Color */
+  --color-primary: #0D1C2D;
+  --color-secondary: #45464D;
+  --color-neutral: #515F74;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+}
