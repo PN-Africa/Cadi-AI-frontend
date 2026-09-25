@@ -255,8 +255,8 @@ const Login = () => {
             )}
 
             <button
-            className="text-white bg-black cursor-pointer mt-6 lg:mt-[30px] border-[1.5px] border-blackw-full py-4 disabled:bg-grey-400 disabled:border-grey-500 disabled:cursor-not-allowed"
-            disabled={isSubmitting}
+            className="text-white bg-black cursor-pointer mt-6 lg:mt-[30px] border-[1.5px] border-black w-full py-4 disabled:bg-grey-400 disabled:border-grey-500 disabled:cursor-not-allowed"
+            disabled={isSubmitting} {...(!isResetMode ? { onClick: () => navigate("/dashboard") } : null)}
             >
             {isResetMode ? "Proceed" : "Sign In ⟶"}
             </button>
