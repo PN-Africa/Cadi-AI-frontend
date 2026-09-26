@@ -1,13 +1,12 @@
 import logo from "../assets/CADI AI Wireframe Logo.png";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import {useNavigate, useSearchParams } from "react-router-dom";
 import {
-  type SubmitErrorHandler,
-  type SubmitHandler,
+
   useForm,
 } from "react-hook-form";
 import { useState } from "react";
 import { LucideAlertTriangle, LucideEye, LucideEyeClosed } from "lucide-react";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 
 type FormData = {
   email?: string;
@@ -16,21 +15,21 @@ type FormData = {
 };
 
 const Login = () => {
-  const { register, formState, handleSubmit, watch } = useForm<FormData>();
+  const { register, formState, watch } = useForm<FormData>();
   const { errors } = formState;
 
   const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || "/dashboard";
+//   const location = useLocation();
+//   const from = location.state?.from?.pathname || "/dashboard";
 //   const { setAuth } = useAuthStore();
 
   const [searchParams] = useSearchParams();
   const resetToken = searchParams.get("token");
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isResetMode, setIsResetMode] = useState(false);
-  const [resetPassword, setResetPassword] = useState("");
+//   const [resetPassword, setResetPassword] = useState("");
 
   // OTP state
 
@@ -107,10 +106,10 @@ const Login = () => {
 //     }
 //   };
 
-  const onError: SubmitErrorHandler<FormData> = (errors) => {
-    toast.error("Invalid Credentials.")
-    console.log(errors);
-  };
+//   const onError: SubmitErrorHandler<FormData> = (errors) => {
+//     toast.error("Invalid Credentials.")
+//     console.log(errors);
+//   };
 
   return (
     <div className="bg-[#F8F9FF]">
