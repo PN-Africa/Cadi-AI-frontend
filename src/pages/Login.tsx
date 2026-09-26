@@ -6,7 +6,7 @@ import {
   useForm,
 } from "react-hook-form";
 import { useState } from "react";
-import { LucideEye, LucideEyeClosed } from "lucide-react";
+import { LucideAlertTriangle, LucideEye, LucideEyeClosed } from "lucide-react";
 import toast from "react-hot-toast";
 
 type FormData = {
@@ -167,6 +167,17 @@ const Login = () => {
                     })}
                 />
                 </div>
+                <div className="bg-[#EEF4FF] p-4 mt-6 flex flex-col items-start gap-2">
+                    <p className="font-medium text-primary text-[16px] flex items-center gap-2">
+                        <LucideAlertTriangle className="size-6" />
+                        Active Shift Emergency Override
+                    </p>
+                    <p className="text-[8px] sm:text-[10px] lg:text-[12px] text-primary">
+                        For immediate diagnostic access during critical clinical procedures, do
+                        not wait for automated email delivery. Contact Hospital Biomedical IT
+                        or dial EXT 4400 for instant biometric verification.</p>
+                </div>
+
             </>
             )}
 
