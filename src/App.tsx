@@ -2,21 +2,36 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import Dashboard from './pages/Dashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminLogin from './pages/AdminLogin';
+import { Navigate } from 'react-router-dom';
 
 
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <Login />,
-    },
-    {
-      path: "/sign-up",
-      element: <SignUp />,
-    },
-    {
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Navigate to="/login" replace />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/sign-up",
+    element: <SignUp />,
+  },
+  {
       path: "/dashboard",
       element: <Dashboard />,
-    }
+  },
+  {
+    path: "/admin29-user",
+    element: <AdminLogin />,
+  },
+  {
+    path: "/admin-dashboard",
+    element: <AdminDashboard />,
+  },
   // {
   //   path: "/dashboard",
   //   element: <Layout />,
