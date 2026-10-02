@@ -98,7 +98,7 @@ const AdminLogin = () => {
             className="text-white bg-black cursor-pointer mt-6 lg:mt-[30px] border-[1.5px] border-black w-full py-4 disabled:bg-grey-400 disabled:border-grey-500 disabled:cursor-not-allowed"
             // disabled={isSubmitting}
             >
-                "Proceed ⟶"
+                Proceed ⟶
             {/* {isSubmitting ? "Sending link..." : "Proceed ⟶"} */}
             </button>
 
