@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import {
-  type SubmitErrorHandler,
-  type SubmitHandler,
+//   type SubmitErrorHandler,
+//   type SubmitHandler,
   useForm,
 } from "react-hook-form";
 import { useState } from "react";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 import logo from "../assets/CADI AI Wireframe Logo.png"
 
 type FormData = {
@@ -13,14 +13,14 @@ type FormData = {
 };
 
 const AdminLogin = () => {
-  const { register, formState, handleSubmit } = useForm<FormData>();
+  const { register, formState } = useForm<FormData>();
   const { errors } = formState;
 
   const navigate = useNavigate();
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+//   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSent, setIsSent] = useState(false);
-  const [sentEmail, setSentEmail] = useState("");
+  const [sentEmail] = useState("");
 
 //   const onSubmit: SubmitHandler<FormData> = async (data) => {
 //     setIsSubmitting(true);
@@ -43,10 +43,10 @@ const AdminLogin = () => {
 //     }
 //   };
 
-  const onError: SubmitErrorHandler<FormData> = (errors) => {
-    toast.error("Please check the highlighted fields.")
-    console.log(errors);
-  };
+//   const onError: SubmitErrorHandler<FormData> = (errors) => {
+//     toast.error("Please check the highlighted fields.")
+//     console.log(errors);
+//   };
 
   return (
     <div className="bg-[#F8F9FF]">
@@ -96,9 +96,10 @@ const AdminLogin = () => {
 
             <button
             className="text-white bg-black cursor-pointer mt-6 lg:mt-[30px] border-[1.5px] border-black w-full py-4 disabled:bg-grey-400 disabled:border-grey-500 disabled:cursor-not-allowed"
-            disabled={isSubmitting}
+            // disabled={isSubmitting}
             >
-            {isSubmitting ? "Sending link..." : "Proceed ⟶"}
+                "Proceed ⟶"
+            {/* {isSubmitting ? "Sending link..." : "Proceed ⟶"} */}
             </button>
 
             <div className="border-t border-[#C6C6CD99] mt-6 pt-6 mb-6 text-center text-sm text-gray-500">

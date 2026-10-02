@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import {
-  type SubmitErrorHandler,
-  type SubmitHandler,
+//   type SubmitErrorHandler,
+//   type SubmitHandler,
   useForm,
 } from "react-hook-form";
 import { useState } from "react";
 import { LucideEye, LucideEyeClosed, LucideInfo } from "lucide-react";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 import logo from "../assets/CADI AI Wireframe Logo.png";
 
 type FormData = {
@@ -18,12 +18,12 @@ type FormData = {
 };
 
 const SignUp = () => {
-  const { register, formState, handleSubmit, watch } = useForm<FormData>();
+  const { register, formState, watch } = useForm<FormData>();
   const { errors } = formState;
 
   const navigate = useNavigate();
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const selectedRole = watch("role");
@@ -48,10 +48,10 @@ const SignUp = () => {
 //     }
 //   };
 
-  const onError: SubmitErrorHandler<FormData> = (errors) => {
-    toast.error("Please check the highlighted fields.")
-    console.log(errors);
-  };
+//   const onError: SubmitErrorHandler<FormData> = (errors) => {
+//     toast.error("Please check the highlighted fields.")
+//     console.log(errors);
+//   };
 
   return (
     <div className="bg-[#F8F9FF]">
