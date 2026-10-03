@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLogin from './pages/AdminLogin';
 import { Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 
 
 const router = createBrowserRouter([
@@ -142,6 +143,9 @@ const router = createBrowserRouter([
 
   export default function App() {
   return (
-      <RouterProvider router={router} />
+      <>
+        <Toaster position="top-center" />
+        <RouterProvider router={router} />
+      </>
   );
 }

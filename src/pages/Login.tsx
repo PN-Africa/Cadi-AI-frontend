@@ -1,13 +1,14 @@
-import logo from "../assets/CADI AI Wireframe Logo.png";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
-//   type SubmitErrorHandler,
-//   type SubmitHandler,
+  type SubmitErrorHandler,
+  type SubmitHandler,
   useForm,
 } from "react-hook-form";
 import { useState } from "react";
 import { LucideAlertTriangle, LucideEye, LucideEyeClosed } from "lucide-react";
-// import toast from "react-hot-toast";
+import toast from "react-hot-toast";
+import { login, type LoginPayload } from "../services/apiLogin";
+import { forgotPassword, type ForgotPasswordPayload } from "../services/apiResetPassword";
 
 type FormData = {
   email?: string;
@@ -16,7 +17,7 @@ type FormData = {
 };
 
 const Login = () => {
-  const { register, formState, watch } = useForm<FormData>();
+  const { register, formState, watch, handleSubmit } = useForm<FormData>();
   const { errors } = formState;
 
   const navigate = useNavigate();
@@ -27,105 +28,75 @@ const Login = () => {
   const [searchParams] = useSearchParams();
   const resetToken = searchParams.get("token");
 
-  const [isSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isResetMode, setIsResetMode] = useState(false);
 //   const [resetPassword, setResetPassword] = useState("");
 
-  // OTP state
-
   const isResetEmailStage = isResetMode && !resetToken;
   const isNewPasswordStage = isResetMode && !!resetToken;
 
-//   const onConfirmOtp = async () => {
-//     const otpValue = otp.join("");
-//     if (otpValue.length < 6) {
-//       setOtpError("Please enter the full 6-digit OTP.");
-//       return;
-//     }
-//     setIsSubmitting(true);
-//     setOtpError("");
-//     try {
-//       await api.post("/admin/auth/reset-password", {
-//         email: resetEmail,
-//         otp: otpValue,
-//         newPassword: resetPassword,
-//       });
-//       setIsOtpMode(false);
-//       setIsResetMode(false);
-//       setOtp(Array(6).fill(""));
-//     } catch (error) {
-//       setOtpError("Invalid or expired OTP. Please try again.");
-//       console.log(error);
-//     } finally {
-//       setIsSubmitting(false);
-//     }
-//   };
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
+    // New-password submission (isNewPasswordStage) isn't wired up yet.
+    if (isNewPasswordStage) {
+      return;
+    }
 
-//   const onSubmit: SubmitHandler<FormData> = async (data) => {
-//     setIsSubmitting(true);
+    setIsSubmitting(true);
 
-//     try {
-//       if (!isResetMode) {
-//         const res = await axiosPrivate.post(`admin/auth/login`, {
-//           email: data.email,
-//           password: data.password,
-//         });
-//         console.log("Full response:", res);
-//         console.log("res.data:", res.data);
+    try {
+      if (isResetEmailStage) {
+        const payload: ForgotPasswordPayload = {
+          email: data.email ?? "",
+        };
 
-//         setAuth({
-//           user: {
-//             email: res.data.admin.email,
-//             name: res.data.admin.name,
-//             role: res.data.admin.role,
-//           },
-//           token: res.data.token,
-//         });
-//         console.log(res.data.admin.name);
-//         console.log(res.data.admin.role);
+        const res = await forgotPassword(payload);
+        toast.success(res.message);
+        return;
+      }
 
-//         navigate(from, { replace: true });
-//         console.log(from);
+      const payload: LoginPayload = {
+        identifier: data.email ?? "",
+        password: data.password,
+      };
 
-//       } else {
-//         if (data.password !== data.confirmPassword) return;
+      await login(payload);
 
-//         await api.post("/admin/auth/request-password-reset", {
-//           email: data.email,
-//           password: data.password,
-//         });
-//         setResetPassword(data.password);
-//         setResetEmail(data.email ?? "");
-//         setIsOtpMode(true);
-//       }
-//     } catch (error) {
-//       toast.error("Invalid Credentials.")
-//       console.log(error);
-//     } finally {
-//       setIsSubmitting(false);
-//     }
-//   };
+      navigate("/dashboard");
+    } catch (error: any) {
+      const backendMessage: string | undefined = error?.response?.data?.message;
 
-//   const onError: SubmitErrorHandler<FormData> = (errors) => {
-//     toast.error("Invalid Credentials.")
-//     console.log(errors);
-//   };
+      if (isResetEmailStage) {
+        toast.error(backendMessage || "Unable to send reset link.");
+      } else {
+        toast.error("Invalid Credentials.");
+      }
+
+      console.log(error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const onError: SubmitErrorHandler<FormData> = (errors) => {
+    toast.error("Invalid Credentials.")
+    console.log(errors);
+  };
 
   return (
     <div className="bg-[#F8F9FF]">
       <div className="min-h-screen flex items-center justify-center px-4 py-6 lg:px-0 lg:py-10">
       <div className="border border-[#C6C6CD99] bg-white border-2 p-6 sm:p-8 lg:p-10">
         <div className="w-full items-center justify-center flex">
-            <img className="h-8 sm:h-9 lg:h-10 w-auto" src={logo} alt="Cadi AI logo" />
+            <p className="font-bold text-[20px] sm:text-[22px] lg:text-[24px] text-primary md:mt-5">CADI AI</p>
         </div>
 
-        <div className="w-full md:w-[500px] flex flex-col items-start pt-6 sm:pt-8 lg:pt-10">
+        <div className="w-full md:w-[500px] flex flex-col items-start pt-6 lg:pt-8">
             <p className="font-semibold text-[18px] sm:text-[20px] lg:text-[22px] text-primary">
             {isResetMode ? "Reset Password" : "Sign In"}
             </p>
             {!isResetMode && (
-            <p className="text-[13px] sm:text-sm lg:text-[14px] text-gray-500">
+            <p className="text-[13px] sm:text-sm lg:text-[14px] text-[#6B7C93]">
                 Sign in to access patient telemetry and care alerts
             </p>
             )}
@@ -133,21 +104,26 @@ const Login = () => {
 
         <form
             className="text-[14px] sm:text-[15px] lg:text-[16px] flex flex-col w-full md:w-[500px]"
+            onSubmit={handleSubmit(onSubmit, onError)}
         >
             {!isResetMode && (
             <>
                 <p className="pt-6 sm:pt-8 lg:pt-10 text-[12px] sm:text-[13px] lg:text-[14px] text-primary uppercase">Email or Phone Number</p>
                 <div
-                className={`border-[1.5px] p-[10px] text-sm flex items-center ${
+                className={`border-[1.5px] rounded-md border-[#6B7C93] p-[10px] text-sm flex items-center ${
                     errors?.email ? "border-red-500" : "border-[#76777D]"
                 }`}
                 >
                 <input
-                    type="email"
+                    type="text"
                     placeholder="e.g. dr.patel@hospital.org or +1 (555) 000-0000"
                     className="w-full py-1 px-2 outline-none bg-transparent"
                     {...register("email", {
                     required: "This field is required",
+                    pattern: {
+                        value: /^(?:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}|\+?[0-9\s().-]{7,15})$/,
+                        message: "Enter a valid email address or phone number",
+                    },
                     })}
                 />
                 </div>
@@ -157,7 +133,7 @@ const Login = () => {
             {isResetEmailStage && (
             <>
                 <p className="pt-6 sm:pt-8 lg:pt-10 text-[12px] sm:text-[13px] lg:text-[14px] text-primary">WORK EMAIL OR HOSPITAL ID</p>
-                <div className="border-[1.5px] p-[10px] text-sm flex items-center border-[#76777D]">
+                <div className="border-[1.5px] rounded-md border-[#6B7C93] p-[10px] text-sm flex items-center border-[#76777D]">
                 <input
                     type="email"
                     placeholder="e.g. dr.patel@hospital.org or +1 (555) 000-0000"
@@ -199,7 +175,7 @@ const Login = () => {
                 </div>
 
                 <div
-                className={`border-[1.5px] p-[10px] text-sm flex items-center gap-2 ${
+                className={`border-[1.5px] rounded-md border-[#6B7C93] p-[10px] text-sm flex items-center gap-2 ${
                     errors?.password ? "border-red-500" : "border-[#76777D]"
                 }`}
                 >
@@ -232,7 +208,7 @@ const Login = () => {
             <>
                 <p className="pt-6 sm:pt-8 lg:pt-10 text-[12px] sm:text-[13px] lg:text-[14px] uppercase text-primary">Confirm New Password</p>
                 <div
-                className={`border-[1.5px] p-[10px] flex items-center ${
+                className={`border-[1.5px] rounded-md border-[#6B7C93] p-[10px] flex items-center ${
                     errors?.confirmPassword
                     ? "border-red-500"
                     : "border-[#76777D]"
@@ -266,10 +242,10 @@ const Login = () => {
             )}
 
             <button
-            className="text-white bg-black cursor-pointer mt-6 lg:mt-[30px] border-[1.5px] border-black w-full py-4 disabled:bg-grey-400 disabled:border-grey-500 disabled:cursor-not-allowed"
-            disabled={isSubmitting} {...(!isResetMode ? { onClick: () => navigate("/dashboard") } : null)}
+            className="text-white bg-[#1F3A5F] cursor-pointer mt-6 lg:mt-[30px] border-[1.5px] rounded-md border-[#6B7C93] border-[#1F3A5F] w-full py-4 disabled:bg-[#6B7C93] disabled:border-[#6B7C93] disabled:cursor-not-allowed"
+            disabled={isSubmitting}
             >
-            {isResetMode ? "Proceed" : "Sign In ⟶"}
+            {isResetMode ? (isSubmitting ? "Sending link..." : "Proceed") : isSubmitting ? "Signing in..." : "Sign In ⟶"}
             </button>
 
             {isResetMode && (
@@ -283,7 +259,7 @@ const Login = () => {
             )}
 
             {!isResetMode && (
-            <div className="border-t border-[#C6C6CD99] mt-6 pt-6 mb-6 text-center text-sm text-gray-500">
+            <div className="border-t border-[#C6C6CD99] mt-6 pt-6 mb-6 text-center text-sm text-[#6B7C93]">
                 Don&apos;t have an account?{" "}
                 <button
                 type="button"

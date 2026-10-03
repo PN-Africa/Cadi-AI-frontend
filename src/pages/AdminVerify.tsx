@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import logo from "../assets/CADI AI Wireframe Logo.svg";
 
 type VerifyStatus = "verifying" | "success" | "error";
 
@@ -49,7 +48,7 @@ const AdminVerify = () => {
       <div className="border border-[#C6C6CD99] bg-white border-2 p-6 sm:p-8 lg:p-10">
         <div className="w-full md:w-[500px] flex flex-col items-center text-center">
             <div className="w-full items-center justify-center flex mb-4">
-                <img className="h-8 sm:h-9 lg:h-10 w-auto" src={logo} alt="Hykers logo" />
+                <p className="font-bold text-[20px] sm:text-[22px] lg:text-[24px] text-primary md:mt-5">CADI AI</p>
             </div>
 
             {status === "verifying" && (
@@ -57,7 +56,7 @@ const AdminVerify = () => {
                 <p className="font-semibold text-[18px] sm:text-[20px] lg:text-[22px] text-primary pt-6 sm:pt-8 lg:pt-10">
                 Verifying your link
                 </p>
-                <p className="text-[13px] sm:text-sm lg:text-[14px] text-gray-500">
+                <p className="text-[13px] sm:text-sm lg:text-[14px] text-[#6B7C93]">
                 Hang tight while we confirm your admin sign-in link.
                 </p>
             </>
@@ -68,7 +67,7 @@ const AdminVerify = () => {
                 <p className="font-semibold text-[18px] sm:text-[20px] lg:text-[22px] text-primary pt-6 sm:pt-8 lg:pt-10">
                 You're verified
                 </p>
-                <p className="text-[13px] sm:text-sm lg:text-[14px] text-gray-500">
+                <p className="text-[13px] sm:text-sm lg:text-[14px] text-[#6B7C93]">
                 Taking you to the admin dashboard...
                 </p>
             </>
@@ -79,14 +78,14 @@ const AdminVerify = () => {
                 <p className="font-semibold text-[18px] sm:text-[20px] lg:text-[22px] text-primary pt-6 sm:pt-8 lg:pt-10">
                 This link is invalid or expired
                 </p>
-                <p className="text-[13px] sm:text-sm lg:text-[14px] text-gray-500">
+                <p className="text-[13px] sm:text-sm lg:text-[14px] text-[#6B7C93]">
                 Request a new sign-in link to continue.
                 </p>
 
                 <button
                 type="button"
                 onClick={() => navigate("/admin29-user")}
-                className="text-white bg-black cursor-pointer mt-6 lg:mt-[30px] border-[1.5px] border-black w-full py-4"
+                className="text-white bg-[#1F3A5F] cursor-pointer mt-6 lg:mt-[30px] border-[1.5px] rounded-md border-[#6B7C93] border-[#1F3A5F] w-full py-4"
                 >
                 Request new link ⟶
                 </button>
