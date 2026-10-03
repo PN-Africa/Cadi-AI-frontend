@@ -3,7 +3,7 @@ import { axiosPrivate } from "../lib/axios";
 export interface SignUpPayload {
   role: "CAREGIVER" | "HEALTHCARE_PROFESSIONAL" | string;
   email: string;
-  phone: string;
+  phone?: string;
   medicalLicenseId: string;
   password: string;
   confirmPassword: string;
