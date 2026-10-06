@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { verifyAdminMagicLink } from "../services/apiAdminVerify";
 
 type VerifyStatus = "verifying" | "success" | "error";
 
@@ -16,30 +17,24 @@ const AdminVerify = () => {
       return;
     }
 
-//     const verifyToken = async () => {
-//       try {
-//         const res = await api.post("/admin/auth/verify-access", {
-//           token,
-//         });
+    const verifyToken = async () => {
+      try {
+        const res = await verifyAdminMagicLink({ token });
 
-//         setAuth({
-//           user: {
-//             email: res.data.admin.email,
-//             name: res.data.admin.name,
-//             role: res.data.admin.role,
-//           },
-//           token: res.data.token,
-//         });
+        // DO NOT FORGET: replace with your actual admin auth store call
+        // useAuthStore.getState().setAuth({ user: res.admin, token: res.token })
+        //currently keeping token in localStorage so the flow is functional end to end.
+        localStorage.setItem("adminToken", res.token);
 
-//         setStatus("success");
-//         navigate("/admin-dashboard", { replace: true });
-//       } catch (error) {
-//         setStatus("error");
-//         console.log(error);
-//       }
-//     };
+        setStatus("success");
+        navigate("/admin-dashboard", { replace: true });
+      } catch (error) {
+        setStatus("error");
+        console.log(error);
+      }
+    };
 
-//     verifyToken();
+    verifyToken();
   }, [token, navigate]);
 
   return (
