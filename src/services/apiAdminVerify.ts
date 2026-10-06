@@ -17,6 +17,6 @@ export interface AdminVerifyResponse {
 export const verifyAdminMagicLink = async (
   payload: AdminVerifyPayload
 ): Promise<AdminVerifyResponse> => {
-  const res = await axiosPrivate.post(`/admin/auth/verify-access`, payload);
+  const res = await axiosPrivate.post(`/auth/admin/verify`, payload);
   return res.data;
 };
