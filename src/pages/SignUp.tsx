@@ -77,7 +77,7 @@ const SignUp = () => {
                 <img className="h-8 sm:h-9 lg:h-10 w-auto" src={logo} alt="Cadi AI logo" />
             </div>
             <p className="font-semibold text-[18px] sm:text-[20px] lg:text-[22px] text-primary">Create your account</p>
-            <p className="text-[13px] sm:text-sm lg:text-[14px] text-gray-500">
+            <p className="text-[13px] sm:text-sm lg:text-[14px] text-[#6B7C93]">
             Register an authorized caregiver or clinical practitioner profile to access real-time patient telemetry and predictive vital alert streams.
             </p>
         </div>
@@ -87,11 +87,11 @@ const SignUp = () => {
             onSubmit={handleSubmit(onSubmit, onError)}
         >
             <p className="pt-6 sm:pt-8 lg:pt-10 text-[12px] sm:text-[13px] lg:text-[14px] text-primary">
-            OPERATIONAL ROLE IDENTIFIER <span className="text-gray-500 normal-case">[required]</span>
+            OPERATIONAL ROLE IDENTIFIER <span className="text-[#6B7C93] normal-case">[required]</span>
             </p>
             <div className="flex flex-col sm:flex-row gap-4 pt-2">
             <label
-                className={`flex-1 border-[1.5px] p-3 sm:p-4 cursor-pointer flex items-start gap-2 ${
+                className={`flex-1 border-[1.5px] rounded-md border-[#6B7C93] p-3 sm:p-4 cursor-pointer flex items-start gap-2 ${
                 selectedRole === "healthcare_professional" ? "border-[#76777D]" : "border-[#0D469C] bg-[#EEF3FC]"
                 }`}
             >
@@ -106,14 +106,14 @@ const SignUp = () => {
                 />
                 <div>
                 <p className="font-semibold text-primary">Caregiver</p>
-                <p className="text-[11px] sm:text-[12px] lg:text-[13px] text-gray-500">
+                <p className="text-[11px] sm:text-[12px] lg:text-[13px] text-[#6B7C93]">
                     Family or professional direct care attendant
                 </p>
                 </div>
             </label>
 
             <label
-                className={`flex-1 border-[1.5px] p-3 sm:p-4 cursor-pointer flex items-start gap-2 ${
+                className={`flex-1 border-[1.5px] rounded-md border-[#6B7C93] p-3 sm:p-4 cursor-pointer flex items-start gap-2 ${
                 selectedRole === "healthcare_professional" ? "border-[#0D469C] bg-[#EEF3FC]" : "border-[#76777D]"
                 }`}
             >
@@ -127,7 +127,7 @@ const SignUp = () => {
                 />
                 <div>
                 <p className="font-semibold text-primary">Healthcare Professional</p>
-                <p className="text-[11px] sm:text-[12px] lg:text-[13px] text-gray-500">
+                <p className="text-[11px] sm:text-[12px] lg:text-[13px] text-[#6B7C93]">
                     Physician, Registered Nurse, or Clinical Specialist
                 </p>
                 </div>
@@ -138,10 +138,10 @@ const SignUp = () => {
             )}
 
             <p className="pt-6 sm:pt-8 lg:pt-10 text-[12px] sm:text-[13px] lg:text-[14px] text-primary">
-            FULL NAME <span className="text-gray-500 normal-case">[e.g. title + legal name]</span>
+            FULL NAME <span className="text-[#6B7C93] normal-case">[e.g. title + legal name]</span>
             </p>
             <div
-            className={`border-[1.5px] text-sm p-[10px] flex items-center ${
+            className={`border-[1.5px] rounded-md border-[#6B7C93] text-sm p-[10px] flex items-center ${
                 errors?.fullName ? "border-red-500" : "border-[#76777D]"
             }`}
             >
@@ -164,7 +164,7 @@ const SignUp = () => {
 
             <p className="pt-6 sm:pt-8 lg:pt-10 text-[12px] sm:text-[13px] lg:text-[14px] text-primary">WORK EMAIL OR DIRECT PHONE</p>
             <div
-            className={`border-[1.5px] text-sm p-[10px] flex items-center ${
+            className={`border-[1.5px] rounded-md border-[#6B7C93] text-sm p-[10px] flex items-center ${
                 errors?.email ? "border-red-500" : "border-[#76777D]"
             }`}
             >
@@ -184,14 +184,14 @@ const SignUp = () => {
             {errors.email ? (
             <p className="text-red-500 text-[11px] pt-1">{errors.email.message}</p>
             ) : (
-            <p className="text-[10px] sm:text-[11px] lg:text-[12px] text-gray-500 pt-1">
+            <p className="text-[10px] sm:text-[11px] lg:text-[12px] text-[#6B7C93] pt-1">
                 Enter your affiliated medical institution domain email for automated clinical verification.
             </p>
             )}
 
             <p className="pt-6 sm:pt-8 lg:pt-10 text-[12px] sm:text-[13px] lg:text-[14px] text-primary">MEDICAL LICENSE ID</p>
             <div
-            className={`border-[1.5px] text-sm p-[10px] flex items-center ${
+            className={`border-[1.5px] rounded-md border-[#6B7C93] text-sm p-[10px] flex items-center ${
                 errors?.medicalLicenseId ? "border-red-500" : "border-[#76777D]"
             }`}
             >
@@ -207,7 +207,7 @@ const SignUp = () => {
             {errors.medicalLicenseId ? (
             <p className="text-red-500 text-[11px] pt-1">{errors.medicalLicenseId.message}</p>
             ) : (
-            <p className="text-[10px] sm:text-[11px] lg:text-[12px] text-gray-500 pt-1">
+            <p className="text-[10px] sm:text-[11px] lg:text-[12px] text-[#6B7C93] pt-1">
                 Enter your valid medical license ID. This would be verified with your institution on creation of your account. If you are a caregiver, please enter "N/A" in this field.
             </p>
             )}
@@ -217,7 +217,7 @@ const SignUp = () => {
             </div>
 
             <div
-            className={`border-[1.5px] p-[10px] text-sm flex items-center gap-2 ${
+            className={`border-[1.5px] rounded-md border-[#6B7C93] p-[10px] text-sm flex items-center gap-2 ${
                 errors?.password ? "border-red-500" : "border-[#76777D]"
             }`}
             >
@@ -260,7 +260,7 @@ const SignUp = () => {
             {errors.password ? (
             <p className="text-red-500 text-[11px] pt-1">{errors.password.message}</p>
             ) : (
-            <p className="text-[10px] sm:text-[11px] lg:text-[12px] text-gray-500 pt-1 flex items-start gap-1">
+            <p className="text-[10px] sm:text-[11px] lg:text-[12px] text-[#6B7C93] pt-1 flex items-start gap-1">
                 <LucideInfo className="size-4 shrink-0 mt-[1px]" />
                 Must be at least 12 characters, and include uppercase, lowercase, a number, and a special character. Institutional multi-factor authentication (MFA) will be configured immediately upon preliminary verification.
             </p>
@@ -271,7 +271,7 @@ const SignUp = () => {
             </div>
 
             <div
-            className={`border-[1.5px] p-[10px] text-sm flex items-center gap-2 ${
+            className={`border-[1.5px] rounded-md border-[#6B7C93] p-[10px] text-sm flex items-center gap-2 ${
                 errors?.confirmPassword ? "border-red-500" : "border-[#76777D]"
             }`}
             >
@@ -305,13 +305,13 @@ const SignUp = () => {
             )}
 
             <button
-            className="text-white bg-black cursor-pointer mt-6 lg:mt-[30px] border-[1.5px] border-black w-full py-4 disabled:bg-grey-400 disabled:border-grey-500 disabled:cursor-not-allowed"
+            className="text-white bg-[#1F3A5F] cursor-pointer mt-6 lg:mt-[30px] border-[1.5px] rounded-md border-[#6B7C93] w-full py-4 disabled:bg-grey-400 disabled:border-grey-500 disabled:cursor-not-allowed"
             disabled={isSubmitting}
             >
             {isSubmitting ? "Creating account..." : "Create Account ⟶"}
             </button>
 
-            <p className="text-center text-sm text-gray-500 mt-4 mb-10">
+            <p className="text-center text-sm text-[#6B7C93] mt-4 mb-10">
             Already have an authorized credential?{" "}
             <button
                 type="button"
