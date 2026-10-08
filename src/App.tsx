@@ -1,14 +1,15 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import Login from './pages/Login'
-import SignUp from './pages/SignUp'
-import Dashboard from './pages/Dashboard';
-import AdminDashboard from './pages/AdminDashboard';
-import AdminLogin from './pages/AdminLogin';
-import { Navigate } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
-
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
+import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
+import AdminLogin from "./pages/AdminLogin";
+import AdminVerify from "./pages/AdminVerify";
+import ProtectedApp from "./auth/ProtectedApp";
+import Dashboard from "./pages/Dashboard";
+import PatientList from "./pages/PatientList";
+import Patient from "./pages/Patient";
 
 const router = createBrowserRouter([
+  // Public routes
   {
     path: "/",
     element: <Navigate to="/login" replace />,
@@ -22,130 +23,37 @@ const router = createBrowserRouter([
     element: <SignUp />,
   },
   {
-      path: "/dashboard",
-      element: <Dashboard />,
-  },
-  {
     path: "/admin29-user",
     element: <AdminLogin />,
   },
   {
-    path: "/admin-dashboard",
-    element: <AdminDashboard />,
+    path: "/admin-verify",
+    element: <AdminVerify />,
   },
-  // {
-  //   path: "/dashboard",
-  //   element: <Layout />,
-  //   errorElement: <ErrorFallback error={null} />,
-  //   children: [
-  //     {
-  //       index: true,
-  //       element: <Dashboard />,
-  //       handle: { crumb: "Dashboard" },
-  //     },
-  //     {
-  //       path: "users",
-  //       element: <Users />,
-  //       handle: { crumb: "Users" },
-  //     },
-  //     {
-  //       path: "hykers",
-  //       element: <Hykers />,
-  //       handle: { crumb: "Hykers"}
-  //     },
-    
-  //   ],
-  // },
-  // {
-  //   path: "/pricing",
-  //   element: <Layout />,
-  //   errorElement: <ErrorFallback error={null} />,
-  //   children: [
-  //     {
-  //       index: true,
-  //       element: <Pricing />,
-  //       handle: { crumb: "Pricing" },
-  //     },
-  //   ],
-  // },
-  // {
-  //   path: "/landmarks",
-  //   element: <Layout />,
-  //   errorElement: <ErrorFallback error={null} />,
-  //   children: [
-  //     {
-  //       index: true,
-  //       element: <Landmarks />,
-  //       handle: {crumb: "Landmarks"},
-  //     },
-  //     {
-  //       path: "update",
-  //       element: <UpdateLandmarks />,
-  //       handle: {crumb: "Update a Landmark"}
-  //     }
-  //   ]
-  // },
-  // {
-  //   path: "/user-management",
-  //   element: <Layout />,
-  //   errorElement: <ErrorFallback error={null} />,
-  //   children: [
-  //     {
-  //       index: true,
-  //       element: <UserManagement />,
-  //       handle: {crumb: "User Management"},
-  //     },
-  //     {
-  //       path: "add",
-  //       element: <AddUser />,
-  //       handle: {crumb: "User Management"},
-  //     },
-  //     {
-  //       path: "edit-permissions",
-  //       element: <EditPermissions />,
-  //       handle: {crumb: "User Management"},
-  //     }
-  //   ]
-  // },
-  //   {
-  //   path: "/hyker-management",
-  //   element: <Layout />,
-  //   errorElement: <ErrorFallback error={null} />,
-  //   children: [
-  //     {
-  //       path: "dashboard",
-  //       element: <HykerDashboard />,
-  //       handle: {crumb: "Hyker Dashboard"},
-  //     },
-  //     {
-  //       path: "candidates",
-  //       element: <Candidates />,
-  //       handle: {crumb: "Candidates"},
-  //     },
-  //     {
-  //       path: "question-bank",
-  //       element: <QuestionBank />,
-  //       handle: {crumb: "Question Bank"},
-  //     },
-  //     {
-  //       path: "video-scoring",
-  //       element: <VideoScoring />,
-  //       handle: {crumb: "Video Scoring"},
-  //     },
-  //     {
-  //       path: "settings",
-  //       element: <HykersSettings />,
-  //       handle: {crumb: "Hyker Settings"},
-  //     }
-  //   ]
-  // }
+
+  {
+    element: <ProtectedApp />,
+    children: [
+      {
+        path: "/dashboard",
+        element: <Dashboard />,
+      },
+      {
+        path: "/patients",
+        element: <PatientList />,
+      },
+      {
+        path: "/patients/:id",
+        element: <Patient />,
+      },
+
+
+    ],
+  },
 ]);
 
-  export default function App() {
-  return (
-      <>
-        <Toaster position="top-center" />
-        <RouterProvider router={router} />
-      </>
-  );
-}
+const App = () => {
+  return <RouterProvider router={router} />;
+};
+
+export default App;

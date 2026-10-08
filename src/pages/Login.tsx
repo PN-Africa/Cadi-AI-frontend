@@ -9,6 +9,7 @@ import { LucideAlertTriangle, LucideEye, LucideEyeClosed } from "lucide-react";
 import toast from "react-hot-toast";
 import { login, type LoginPayload } from "../services/apiLogin";
 import { forgotPassword, type ForgotPasswordPayload } from "../services/apiResetPassword";
+import { useAuthStore } from "../auth/auth";
 
 type FormData = {
   email?: string;
@@ -23,7 +24,7 @@ const Login = () => {
   const navigate = useNavigate();
 //   const location = useLocation();
 //   const from = location.state?.from?.pathname || "/dashboard";
-//   const { setAuth } = useAuthStore();
+  const setAuth = useAuthStore((state) => state.setAuth);
 
   const [searchParams] = useSearchParams();
   const resetToken = searchParams.get("token");
@@ -33,8 +34,35 @@ const Login = () => {
   const [isResetMode, setIsResetMode] = useState(false);
 //   const [resetPassword, setResetPassword] = useState("");
 
+  // OTP state
+
   const isResetEmailStage = isResetMode && !resetToken;
   const isNewPasswordStage = isResetMode && !!resetToken;
+
+//   const onConfirmOtp = async () => {
+//     const otpValue = otp.join("");
+//     if (otpValue.length < 6) {
+//       setOtpError("Please enter the full 6-digit OTP.");
+//       return;
+//     }
+//     setIsSubmitting(true);
+//     setOtpError("");
+//     try {
+//       await api.post("/admin/auth/reset-password", {
+//         email: resetEmail,
+//         otp: otpValue,
+//         newPassword: resetPassword,
+//       });
+//       setIsOtpMode(false);
+//       setIsResetMode(false);
+//       setOtp(Array(6).fill(""));
+//     } catch (error) {
+//       setOtpError("Invalid or expired OTP. Please try again.");
+//       console.log(error);
+//     } finally {
+//       setIsSubmitting(false);
+//     }
+//   };
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     // New-password submission (isNewPasswordStage) isn't wired up yet.
@@ -60,7 +88,15 @@ const Login = () => {
         password: data.password,
       };
 
-      await login(payload);
+      const res = await login(payload);
+
+      setAuth({
+        user: {
+          email: data.email ?? "",
+          role: res.role,
+        },
+        token: res.accessToken,
+      });
 
       navigate("/dashboard");
     } catch (error: any) {

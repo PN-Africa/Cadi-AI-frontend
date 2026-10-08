@@ -6,13 +6,10 @@ export interface LoginPayload {
 }
 
 export interface LoginResponse {
-  token: string;
-  admin: {
-    id: string;
-    email: string;
-    name: string;
-    role: string;
-  };
+  message: string;
+  userId: string;
+  role: string;
+  accessToken: string;
 }
 
 export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
