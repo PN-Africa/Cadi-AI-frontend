@@ -7,7 +7,6 @@ import {
 import { useState } from "react";
 import { LucideEye, LucideEyeClosed, LucideInfo } from "lucide-react";
 import toast from "react-hot-toast";
-import logo from "../assets/CADI AI Wireframe Logo.png";
 import { signUp, type SignUpPayload } from "../services/apiSignUp";
 
 type FormData = {
@@ -73,8 +72,8 @@ const SignUp = () => {
       <div className="min-h-screen flex items-center justify-center px-4 py-6 lg:px-0 lg:py-10">
       <div className="border border-[#C6C6CD99] bg-white border-2 p-6 sm:p-8 lg:p-10">
         <div className="w-full md:w-[500px] flex flex-col items-start">
-            <div className="w-full items-center justify-center flex mb-4">
-                <img className="h-8 sm:h-9 lg:h-10 w-auto" src={logo} alt="Cadi AI logo" />
+            <div className="w-full items-center justify-center flex">
+                <p className="font-bold text-[20px] sm:text-[22px] lg:text-[24px] text-primary md:mt-5">CADI AI</p>
             </div>
             <p className="font-semibold text-[18px] sm:text-[20px] lg:text-[22px] text-primary">Create your account</p>
             <p className="text-[13px] sm:text-sm lg:text-[14px] text-[#6B7C93]">
