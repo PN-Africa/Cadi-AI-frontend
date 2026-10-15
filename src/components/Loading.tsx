@@ -12,7 +12,7 @@ const Skeleton = ({ className = "" }: { className?: string }) => (
   <div className={`animate-pulse motion-reduce:animate-none rounded-md bg-[#E4E8F0] ${className}`} />
 );
 
-const Loading = ({ variant = "spinner",rows = 5, label = "Loading" }: LoadingProps) => {
+const Loading = ({ variant = "spinner", rows = 5, label = "Loading" }: LoadingProps) => {
   if (variant === "cards") {
     return (
       <div role="status" aria-live="polite" className="grid grid-cols-1 sm:grid-cols-3 gap-4">
