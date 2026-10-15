@@ -80,9 +80,9 @@ const AdminVerify = () => {
                 <button
                 type="button"
                 onClick={() => navigate("/admin29-user")}
-                className="text-white bg-[#1F3A5F] cursor-pointer mt-6 lg:mt-[30px] border-[1.5px] rounded-md border-[#6B7C93] border-[#1F3A5F] w-full py-4"
+                className="text-white bg-[#3B82F6] cursor-pointer mt-6 lg:mt-[30px] border-[1.5px] rounded-md border-[#6B7C93] border-[#3B82F6] w-full py-4"
                 >
-                Request new link ⟶
+                Request new link
                 </button>
             </>
             )}

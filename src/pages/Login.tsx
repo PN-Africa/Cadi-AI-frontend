@@ -10,6 +10,8 @@ import toast from "react-hot-toast";
 import { login, type LoginPayload } from "../services/apiLogin";
 import { forgotPassword, type ForgotPasswordPayload } from "../services/apiResetPassword";
 import { useAuthStore } from "../auth/auth";
+import animation1 from "../assets/cadi-ai animation.png"
+// import { div } from "framer-motion/client";
 
 type FormData = {
   email?: string;
@@ -120,20 +122,25 @@ const Login = () => {
   };
 
   return (
-    <div className="bg-[#F8F9FF]">
-      <div className="min-h-screen flex items-center justify-center px-4 py-6 lg:px-0 lg:py-10">
-      <div className="border border-[#C6C6CD99] bg-white border-2 p-6 sm:p-8 lg:p-10">
-        <div className="w-full items-center justify-center flex">
-            <p className="font-bold text-[20px] sm:text-[22px] lg:text-[24px] text-primary md:mt-5">CADI AI</p>
+    <div className="flex flex-row min-h-screen lg:h-screen lg:overflow-hidden">
+        <div className="hidden lg:flex w-1/2 bg-[#93C5FD] flex-col items-center justify-center">
+            <img className="w-full flex-1 min-h-0 px-10 object-contain" src={animation1} alt="CADI AI Animation" />
+            <div className="px-10 pb-10 text-center">
+                <p className="text-[14px] sm:text-[15px] lg:text-[16px] font-medium">
+                    Stay informed with Cadi Ai, clear alerts help you spot potential patient concerns and decide what to do next.
+                </p>
+            </div>
         </div>
+        <div className="w-full lg:w-1/2 lg:h-full lg:overflow-y-auto flex justify-center px-4 py-6 lg:px-0 lg:py-10">
+            <div className="my-auto p-6 sm:p-8 lg:p-10">
 
-        <div className="w-full md:w-[500px] flex flex-col items-start pt-6 lg:pt-8">
-            <p className="font-semibold text-[18px] sm:text-[20px] lg:text-[22px] text-primary">
-            {isResetMode ? "Reset Password" : "Sign In"}
+        <div className="w-full md:w-[500px] flex flex-col items-center pt-6 lg:pt-8">
+            <p className="font-semibold text-[24px] sm:text-[30px] lg:text-[36px] text-primary">
+            {isResetMode ? "Reset Password" : "Welcome Back"}
             </p>
             {!isResetMode && (
-            <p className="text-[13px] sm:text-sm lg:text-[14px] text-[#6B7C93]">
-                Sign in to access patient telemetry and care alerts
+            <p className="text-[13px] sm:text-sm lg:text-[14px] text-center text-[#6B7C93]">
+                Spot potential patient concerns sooner with clear alerts that supports human care decisions.
             </p>
             )}
         </div>
@@ -195,19 +202,10 @@ const Login = () => {
 
             {(!isResetMode || isNewPasswordStage) && (
             <>
-                <div className="flex flex-row justify-between items-center pt-6 lg:pt-8">
+                <div className="flex items-start pt-6 lg:pt-8">
                 <p className="text-[12px] sm:text-[13px] lg:text-[14px] uppercase text-primary">
                     {isResetMode ? "Create New Password" : "Password"}
                 </p>
-                {!isResetMode && (
-                    <button
-                    type="button"
-                    onClick={() => setIsResetMode(true)}
-                    className="text-neutral text-[12px] sm:text-[13px] lg:text-[14px] hover:underline"
-                    >
-                    Forgot Password?
-                    </button>
-                )}
                 </div>
 
                 <div
@@ -277,11 +275,30 @@ const Login = () => {
             </>
             )}
 
+            {!isResetMode && (
+                <div className="flex items-center justify-between mt-2">
+                    <div className="flex items-center">
+                        <input type="checkbox" id="rememberMe" className="mr-2" />
+                        <label htmlFor="rememberMe" className="text-[12px] sm:text-[13px] lg:text-[14px] text-[#6B7C93]">
+                            Remember Me
+                        </label>
+                    </div>
+                    
+                    <button
+                        type="button"
+                        onClick={() => setIsResetMode(true)}
+                        className="text-[12px] text-[#3B82F6] sm:text-[13px] lg:text-[14px] hover:underline"
+                        >
+                        Forgot Password?
+                    </button>
+                </div>
+            )}
+
             <button
-            className="text-white bg-[#1F3A5F] cursor-pointer mt-6 lg:mt-[30px] border-[1.5px] rounded-md border-[#6B7C93] border-[#1F3A5F] w-full py-4 disabled:bg-[#6B7C93] disabled:border-[#6B7C93] disabled:cursor-not-allowed"
+            className="text-white bg-[#1D4ED8] cursor-pointer mt-6 lg:mt-[30px] border-[1.5px] rounded-lg border-[#1D4ED8] w-full py-4 disabled:bg-[#6B7C93] disabled:border-[#6B7C93] disabled:cursor-not-allowed"
             disabled={isSubmitting}
             >
-            {isResetMode ? (isSubmitting ? "Sending link..." : "Proceed") : isSubmitting ? "Signing in..." : "Sign In ⟶"}
+            {isResetMode ? (isSubmitting ? "Sending link..." : "Proceed") : isSubmitting ? "Signing in..." : "Sign In"}
             </button>
 
             {isResetMode && (
@@ -290,7 +307,7 @@ const Login = () => {
                 onClick={() => setIsResetMode(false)}
                 className="text-xs font-medium text-primary flex justify-left align-left mt-4 mb-10 hover:underline cursor-pointer uppercase"
             >
-                ⟵ Return to Sign in
+                Return to Sign in
             </button>
             )}
 
@@ -300,7 +317,7 @@ const Login = () => {
                 <button
                 type="button"
                 onClick={() => navigate("/sign-up")}
-                className="text-primary font-medium hover:underline cursor-pointer"
+                className="text-[#3B82F6] font-medium hover:underline cursor-pointer"
                 >
                 Sign up
                 </button>

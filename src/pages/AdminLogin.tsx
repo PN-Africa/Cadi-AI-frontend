@@ -97,10 +97,10 @@ const AdminLogin = () => {
             </div>
 
             <button
-            className="text-white bg-[#1F3A5F] cursor-pointer mt-6 lg:mt-[30px] border-[1.5px] rounded-md border-[#6B7C93] border-[#1F3A5F] w-full py-4 disabled:bg-[#6B7C93] disabled:border-[#6B7C93] disabled:cursor-not-allowed"
+            className="text-white bg-[#3B82F6] cursor-pointer mt-6 lg:mt-[30px] border-[1.5px] rounded-md border-[#6B7C93] border-[#3B82F6] w-full py-4 disabled:bg-[#6B7C93] disabled:border-[#6B7C93] disabled:cursor-not-allowed"
             disabled={isSubmitting}
             >
-                {isSubmitting ? "Sending link..." : "Proceed ⟶"}
+                {isSubmitting ? "Sending link..." : "Proceed"}
             </button>
 
             <div className="border-t border-[#C6C6CD99] mt-6 pt-6 mb-6 text-center text-sm text-[#6B7C93]">
@@ -129,7 +129,7 @@ const AdminLogin = () => {
             <button
                 type="button"
                 onClick={() => navigate("/login")}
-                className="text-primary font-medium hover:underline cursor-pointer"
+                className="text-[#3B82F6] font-medium hover:underline cursor-pointer"
             >
                 Back to Sign in
             </button>

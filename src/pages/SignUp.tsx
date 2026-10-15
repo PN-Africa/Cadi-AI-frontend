@@ -8,6 +8,7 @@ import { useState } from "react";
 import { LucideEye, LucideEyeClosed, LucideInfo } from "lucide-react";
 import toast from "react-hot-toast";
 import { signUp, type SignUpPayload } from "../services/apiSignUp";
+import animation1 from "../assets/cadi-ai animation.png";
 
 type FormData = {
   role: "caregiver" | "healthcare_professional";
@@ -68,73 +69,25 @@ const SignUp = () => {
   };
 
   return (
-    <div className="bg-[#F8F9FF]">
-      <div className="min-h-screen flex items-center justify-center px-4 py-6 lg:px-0 lg:py-10">
-      <div className="border border-[#C6C6CD99] bg-white border-2 p-6 sm:p-8 lg:p-10">
-        <div className="w-full md:w-[500px] flex flex-col items-start">
-            <div className="w-full items-center justify-center flex">
-                <p className="font-bold text-[20px] sm:text-[22px] lg:text-[24px] text-primary md:mt-5">CADI AI</p>
+    <div className="flex flex-row min-h-screen lg:fixed lg:inset-0 lg:overflow-hidden">
+        <div className="hidden lg:flex w-1/2 bg-[#93C5FD] flex-col items-center justify-center">
+            <img className="w-full flex-1 min-h-0 px-10 object-contain" src={animation1} alt="CADI AI Animation" />
+            <div className="px-10 pb-10 text-center">
+                <p className="text-[14px] sm:text-[15px] lg:text-[16px] font-medium">
+                    Stay informed with Cadi Ai, clear alerts help you spot potential patient concerns and decide what to do next.
+                </p>
             </div>
-            <p className="font-semibold text-[18px] sm:text-[20px] lg:text-[22px] text-primary">Create your account</p>
-            <p className="text-[13px] sm:text-sm lg:text-[14px] text-[#6B7C93]">
+        </div>
+        <div className="w-full lg:w-1/2 lg:h-full lg:overflow-y-auto flex flex-col items-center px-4 py-6 lg:px-0 lg:py-10">
+            <p className="mt-auto font-semibold text-[24px] sm:text-[30px] lg:text-[36px] text-primary">Create an <span className="text-[#3B82F6]">Account</span></p>
+            <p className="lg:px-10 text-[13px] sm:text-sm lg:text-[14px] text-center text-[#6B7C93]">
             Register an authorized caregiver or clinical practitioner profile to access real-time patient telemetry and predictive vital alert streams.
             </p>
-        </div>
 
         <form
-            className="text-[14px] sm:text-[15px] lg:text-[16px] flex flex-col w-full md:w-[500px]"
+            className="mb-auto text-[14px] sm:text-[15px] lg:text-[16px] flex flex-col w-full md:w-[500px]"
             onSubmit={handleSubmit(onSubmit, onError)}
         >
-            <p className="pt-6 sm:pt-8 lg:pt-10 text-[12px] sm:text-[13px] lg:text-[14px] text-primary">
-            OPERATIONAL ROLE IDENTIFIER <span className="text-[#6B7C93] normal-case">[required]</span>
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 pt-2">
-            <label
-                className={`flex-1 border-[1.5px] rounded-md border-[#6B7C93] p-3 sm:p-4 cursor-pointer flex items-start gap-2 ${
-                selectedRole === "healthcare_professional" ? "border-[#76777D]" : "border-[#0D469C] bg-[#EEF3FC]"
-                }`}
-            >
-                <input
-                type="radio"
-                value="caregiver"
-                defaultChecked
-                className="mt-1"
-                {...register("role", {
-                    required: "Please select a role",
-                })}
-                />
-                <div>
-                <p className="font-semibold text-primary">Caregiver</p>
-                <p className="text-[11px] sm:text-[12px] lg:text-[13px] text-[#6B7C93]">
-                    Family or professional direct care attendant
-                </p>
-                </div>
-            </label>
-
-            <label
-                className={`flex-1 border-[1.5px] rounded-md border-[#6B7C93] p-3 sm:p-4 cursor-pointer flex items-start gap-2 ${
-                selectedRole === "healthcare_professional" ? "border-[#0D469C] bg-[#EEF3FC]" : "border-[#76777D]"
-                }`}
-            >
-                <input
-                type="radio"
-                value="healthcare_professional"
-                className="mt-1"
-                {...register("role", {
-                    required: "Please select a role",
-                })}
-                />
-                <div>
-                <p className="font-semibold text-primary">Healthcare Professional</p>
-                <p className="text-[11px] sm:text-[12px] lg:text-[13px] text-[#6B7C93]">
-                    Physician, Registered Nurse, or Clinical Specialist
-                </p>
-                </div>
-            </label>
-            </div>
-            {errors.role && (
-            <p className="text-red-500 text-[11px] pt-1">{errors.role.message}</p>
-            )}
 
             <p className="pt-6 sm:pt-8 lg:pt-10 text-[12px] sm:text-[13px] lg:text-[14px] text-primary">
             FULL NAME <span className="text-[#6B7C93] normal-case">[e.g. title + legal name]</span>
@@ -186,6 +139,34 @@ const SignUp = () => {
             <p className="text-[10px] sm:text-[11px] lg:text-[12px] text-[#6B7C93] pt-1">
                 Enter your affiliated medical institution domain email for automated clinical verification.
             </p>
+            )}
+
+            <p className="pt-6 sm:pt-8 lg:pt-10 text-[12px] sm:text-[13px] lg:text-[14px] text-primary">
+            SELECT ROLE <span className="text-[#6B7C93] normal-case">[required]</span>
+            </p>
+            <div
+            className={`border-[1.5px] rounded-md border-[#6B7C93] text-sm p-[10px] flex items-center mt-2 ${
+                errors?.role ? "border-red-500" : "border-[#76777D]"
+            }`}
+            >
+            <select
+                defaultValue="caregiver"
+                className="w-full py-1 px-2 outline-none bg-transparent cursor-pointer"
+                {...register("role", {
+                required: "Please select a role",
+                })}
+            >
+                <option value="caregiver">Caregiver</option>
+                <option value="healthcare_professional">Healthcare Professional</option>
+            </select>
+            </div>
+            <p className="text-[10px] sm:text-[11px] lg:text-[12px] text-[#6B7C93] pt-1">
+            {selectedRole === "healthcare_professional"
+                ? "Physician, Registered Nurse, or Clinical Specialist"
+                : "Family or professional direct care attendant"}
+            </p>
+            {errors.role && (
+            <p className="text-red-500 text-[11px] pt-1">{errors.role.message}</p>
             )}
 
             <p className="pt-6 sm:pt-8 lg:pt-10 text-[12px] sm:text-[13px] lg:text-[14px] text-primary">MEDICAL LICENSE ID</p>
@@ -304,10 +285,10 @@ const SignUp = () => {
             )}
 
             <button
-            className="text-white bg-[#1F3A5F] cursor-pointer mt-6 lg:mt-[30px] border-[1.5px] rounded-md border-[#6B7C93] w-full py-4 disabled:bg-grey-400 disabled:border-grey-500 disabled:cursor-not-allowed"
+            className="text-white bg-[#3B82F6] cursor-pointer mt-6 lg:mt-[30px] border-[1.5px] rounded-lg border-[#6B7C93] w-full py-4 disabled:bg-grey-400 disabled:border-grey-500 disabled:cursor-not-allowed"
             disabled={isSubmitting}
             >
-            {isSubmitting ? "Creating account..." : "Create Account ⟶"}
+            {isSubmitting ? "Creating account..." : "Create Account"}
             </button>
 
             <p className="text-center text-sm text-[#6B7C93] mt-4 mb-10">
@@ -315,7 +296,7 @@ const SignUp = () => {
             <button
                 type="button"
                 onClick={() => navigate("/")}
-                className="text-primary hover:underline cursor-pointer"
+                className="text-[#3B82F6] hover:underline cursor-pointer"
             >
                 Sign in
             </button>
@@ -323,8 +304,6 @@ const SignUp = () => {
         </form>
         </div>
     </div>
-    </div>
-
 
   );
 };
