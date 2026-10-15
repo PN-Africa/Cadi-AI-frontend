@@ -8,7 +8,7 @@ import { useState } from "react";
 import { LucideEye, LucideEyeClosed, LucideInfo } from "lucide-react";
 import toast from "react-hot-toast";
 import { signUp, type SignUpPayload } from "../services/apiSignUp";
-import animation1 from "../assets/cadi-ai animation.png";
+import animation1 from "../assets/cadi-ai animation.svg";
 
 type FormData = {
   role: "caregiver" | "healthcare_professional";

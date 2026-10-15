@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 import { login, type LoginPayload } from "../services/apiLogin";
 import { forgotPassword, type ForgotPasswordPayload } from "../services/apiResetPassword";
 import { useAuthStore } from "../auth/auth";
-import animation1 from "../assets/cadi-ai animation.png"
+import animation1 from "../assets/cadi-ai animation.svg"
 // import { div } from "framer-motion/client";
 
 type FormData = {
