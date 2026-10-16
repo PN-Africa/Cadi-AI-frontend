@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useOutletContext } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
   LucideAlertTriangle,
@@ -8,10 +8,9 @@ import {
   LucideRefreshCw,
   LucideUsers,
 } from "lucide-react";
-import Sidebar from "../components/Sidebar";
-import Navbar from "../components/Navbar";
 import Loading from "../components/Loading";
 import Pagination from "../components/Pagination";
+import type { LayoutContext } from "../layout/Layout";
 import {
   getDashboard,
   type DashboardData,
@@ -236,11 +235,11 @@ const EmptyState = () => (
 );
 
 const Dashboard = () => {
+  const { setNotifications } = useOutletContext<LayoutContext>();
   const [data, setData] = useState<DashboardData | null>(null);
   const [status, setStatus] = useState<LoadStatus>("loading");
   const [page, setPage] = useState(1);
   const [isPaging, setIsPaging] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const hasData = useRef(false);
   const requestId = useRef(0);
@@ -257,10 +256,10 @@ const Dashboard = () => {
     try {
       const result = await getDashboard(targetPage);
 
-      // Ignore responses that arrive after a newer request was started.
       if (currentRequest !== requestId.current) return;
 
       setData(result);
+      setNotifications(result.alerts);
       setPage(targetPage);
       hasData.current = true;
       setStatus("success");
@@ -279,7 +278,7 @@ const Dashboard = () => {
         setIsPaging(false);
       }
     }
-  }, []);
+  }, [setNotifications]);
 
   useEffect(() => {
     loadDashboard(1);
@@ -289,83 +288,72 @@ const Dashboard = () => {
     data !== null && data.summary.totalPatients === 0 && data.patients.length === 0;
 
   return (
-    <div className="min-h-screen bg-[#F8F9FF] lg:flex">
-      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+    <div className="p-4 sm:p-6 lg:p-8 flex flex-col gap-6">
+      <h1 className="sr-only">Dashboard</h1>
 
-      <div className="flex-1 min-w-0 flex flex-col">
-        <Navbar
-          onMenuClick={() => setIsSidebarOpen(true)}
-          notifications={data?.alerts ?? []}
-        />
+      {status === "loading" && (
+        <>
+          <Loading variant="cards" label="Loading dashboard" />
+          <div className="bg-white border border-[#C6C6CD99] rounded-md">
+            <Loading variant="table" rows={5} label="Loading patients" />
+          </div>
+        </>
+      )}
 
-        <main className="p-4 sm:p-6 lg:p-8 flex flex-col gap-6">
-          <h1 className="sr-only">Dashboard</h1>
+      {status === "error" && <ErrorState onRetry={() => loadDashboard(1)} />}
 
-          {status === "loading" && (
-            <>
-              <Loading variant="cards" label="Loading dashboard" />
-              <div className="bg-white border border-[#C6C6CD99] rounded-md">
-                <Loading variant="table" rows={5} label="Loading patients" />
-              </div>
-            </>
-          )}
+      {status === "success" && data && isEmpty && <EmptyState />}
 
-          {status === "error" && <ErrorState onRetry={() => loadDashboard(1)} />}
+      {status === "success" && data && !isEmpty && (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <SummaryCard
+              label="Total Patients Monitored"
+              value={data.summary.totalPatients}
+              icon={LucideUsers}
+              iconBg="bg-[#EEF3FC]"
+              iconColor="text-[#0D469C]"
+            />
+            <SummaryCard
+              label="Needs Attention"
+              value={data.summary.needsAttention}
+              icon={LucideAlertTriangle}
+              iconBg="bg-[#FFF8E6]"
+              iconColor="text-[#8A6116]"
+            />
+            <SummaryCard
+              label="Active Alerts"
+              value={data.summary.alerts}
+              icon={LucideOctagonAlert}
+              iconBg="bg-[#FDECEC]"
+              iconColor="text-[#8A1F1F]"
+            />
+          </div>
 
-          {status === "success" && data && isEmpty && <EmptyState />}
+          <StatusOverview summary={data.summary} />
 
-          {status === "success" && data && !isEmpty && (
-            <>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <SummaryCard
-                  label="Total Patients Monitored"
-                  value={data.summary.totalPatients}
-                  icon={LucideUsers}
-                  iconBg="bg-[#EEF3FC]"
-                  iconColor="text-[#0D469C]"
-                />
-                <SummaryCard
-                  label="Needs Attention"
-                  value={data.summary.needsAttention}
-                  icon={LucideAlertTriangle}
-                  iconBg="bg-[#FFF8E6]"
-                  iconColor="text-[#8A6116]"
-                />
-                <SummaryCard
-                  label="Active Alerts"
-                  value={data.summary.alerts}
-                  icon={LucideOctagonAlert}
-                  iconBg="bg-[#FDECEC]"
-                  iconColor="text-[#8A1F1F]"
-                />
-              </div>
+          <section className="bg-white border border-[#C6C6CD99] rounded-md overflow-hidden">
+            {isPaging ? (
+              <Loading variant="table" rows={5} label="Loading patients" />
+            ) : (
+              <PatientsTable patients={data.patients} />
+            )}
 
-              <StatusOverview summary={data.summary} />
-
-              <section className="bg-white border border-[#C6C6CD99] rounded-md overflow-hidden">
-                {isPaging ? (
-                  <Loading variant="table" rows={5} label="Loading patients" />
-                ) : (
-                  <PatientsTable patients={data.patients} />
-                )}
-
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-[#C6C6CD99]">
-                  <p className="text-[12px] sm:text-[13px] text-[#6B7C93]">
-                    {data.pagination.total}{" "}
-                    {data.pagination.total === 1 ? "patient" : "patients"}
-                  </p>
-                  <Pagination
-                    page={page}
-                    totalPages={data.pagination.totalPages}
-                    onPageChange={loadDashboard}
-                    disabled={isPaging}
-                  />
-                </div>
-              </section>
-            </>
-          )}
-        </main>
-      </div>
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-[#C6C6CD99]">
+              <p className="text-[12px] sm:text-[13px] text-[#6B7C93]">
+                {data.pagination.total}{" "}
+                {data.pagination.total === 1 ? "patient" : "patients"}
+              </p>
+              <Pagination
+                page={page}
+                totalPages={data.pagination.totalPages}
+                onPageChange={loadDashboard}
+                disabled={isPaging}
+              />
+            </div>
+          </section>
+        </>
+      )}
     </div>
   );
 };

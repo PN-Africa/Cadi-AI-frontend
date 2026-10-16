@@ -4,6 +4,7 @@ import SignUp from "./pages/SignUp";
 import AdminLogin from "./pages/AdminLogin";
 import AdminVerify from "./pages/AdminVerify";
 import ProtectedApp from "./auth/ProtectedApp";
+import Layout from "./layout/Layout";
 import Dashboard from "./pages/Dashboard";
 import PatientList from "./pages/PatientList";
 import Patient from "./pages/Patient";
@@ -35,19 +36,22 @@ const router = createBrowserRouter([
     element: <ProtectedApp />,
     children: [
       {
-        path: "/dashboard",
-        element: <Dashboard />,
+        element: <Layout />,
+        children: [
+          {
+            path: "/dashboard",
+            element: <Dashboard />,
+          },
+          {
+            path: "/patients",
+            element: <PatientList />,
+          },
+          {
+            path: "/patients/:id",
+            element: <Patient />,
+          },
+        ],
       },
-      {
-        path: "/patients",
-        element: <PatientList />,
-      },
-      {
-        path: "/patients/:id",
-        element: <Patient />,
-      },
-
-
     ],
   },
 ]);
