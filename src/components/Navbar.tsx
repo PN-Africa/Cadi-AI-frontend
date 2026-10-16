@@ -15,18 +15,18 @@ const Navbar = ({ onMenuClick, notifications = [] }: NavbarProps) => {
   const initial = displayName.charAt(0).toUpperCase() || "U";
 
   return (
-    <header className="sticky top-0 z-20 bg-[#F8F9FF] border-b border-[#C6C6CD99] px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-3">
-      <div className="flex items-center gap-3 min-w-0">
+    <header className="sticky top-0 z-20 bg-[#F8F9FF] px-4 sm:px-6 lg:px-8 py-3 lg:py-6 flex items-center justify-between gap-3">
+      <div className="flex items-center gap-6 min-w-0">
         <button
           type="button"
           onClick={onMenuClick}
           aria-label="Open navigation menu"
-          className="lg:hidden p-2 rounded-md cursor-pointer hover:bg-white"
+          className="lg:hidden py-2 rounded-md cursor-pointer hover:bg-white"
         >
           <LucideMenu className="size-6 text-primary" />
         </button>
 
-        <p className="font-semibold text-[16px] sm:text-[20px] lg:text-[24px] text-primary truncate">
+        <p className="font-semibold text-[16px] sm:text-[24px] lg:text-[32px] text-primary truncate">
           Welcome Back{displayName ? `, ${displayName}` : ""}
         </p>
       </div>

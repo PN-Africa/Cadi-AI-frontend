@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { LucideLayoutDashboard, LucideLogOut, LucideUsers, LucideX } from "lucide-react";
+import { LucideLayoutDashboard, LucideLogOut, LucideUsers, LucideX, LucideFolder } from "lucide-react";
 import { useAuthStore } from "../auth/auth";
 
 interface SidebarProps {
@@ -7,11 +7,10 @@ interface SidebarProps {
   onClose: () => void;
 }
 
-// Only routes that exist in the router are listed here. Add new entries as
-// their pages are built.
 const navItems = [
   { label: "Dashboard", to: "/dashboard", icon: LucideLayoutDashboard },
   { label: "Patients", to: "/patients", icon: LucideUsers },
+  { label: "History", to: "/patient-history", icon: LucideFolder}
 ];
 
 const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
@@ -41,7 +40,6 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         aria-label="Main navigation"
       >
         <div className="flex items-center justify-between px-2 py-2">
-          <p className="font-bold text-[20px] lg:text-[22px] text-primary">CADI AI</p>
           <button
             type="button"
             onClick={onClose}
@@ -61,7 +59,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2 rounded-md text-[14px] ${
                   isActive
-                    ? "bg-[#EEF3FC] text-[#0D469C] font-medium"
+                    ? "text-[#0D469C] font-medium"
                     : "text-[#6B7C93] hover:bg-[#F8F9FF]"
                 }`
               }
