@@ -212,7 +212,7 @@ const ErrorState = ({ onRetry }: { onRetry: () => void }) => (
     <button
       type="button"
       onClick={onRetry}
-      className="text-white bg-[#1F3A5F] cursor-pointer border-[1.5px] rounded-md border-[#1F3A5F] px-4 py-2 text-[13px] sm:text-[14px] flex items-center gap-2"
+      className="text-white bg-[#3B82F6] cursor-pointer border-[1.5px] rounded-md border-[#3B82F6] px-4 py-2 text-[13px] sm:text-[14px] flex items-center gap-2"
     >
       <LucideRefreshCw className="size-4" />
       Try Again

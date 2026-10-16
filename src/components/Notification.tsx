@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LucideAlertTriangle, LucideBell, LucideOctagonAlert } from "lucide-react";
+import { LucideAlertTriangle, LucideOctagonAlert } from "lucide-react";
+import notificationicon from "../assets/notification.svg"
 import type { DashboardAlert } from "../services/apiDashboard";
 
 interface NotificationsProps {
@@ -51,9 +52,9 @@ const Notifications = ({ items }: NotificationsProps) => {
         aria-haspopup="true"
         aria-expanded={isOpen}
         aria-label={hasItems ? `Notifications, ${items.length} new` : "Notifications"}
-        className="relative p-2 rounded-md cursor-pointer hover:bg-white"
+        className="relative p-2 rounded-md cursor-pointer"
       >
-        <LucideBell className="size-6 text-primary" />
+        <img src={notificationicon} className="size-7 shrink-0" />
         {hasItems && (
           <span
             className="absolute top-1.5 right-1.5 size-2.5 rounded-full bg-[#D64545] border-2 border-[#F8F9FF]"

@@ -1,6 +1,10 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { LucideLayoutDashboard, LucideLogOut, LucideUsers, LucideX, LucideFolder } from "lucide-react";
+import { LucideX } from "lucide-react";
 import { useAuthStore } from "../auth/auth";
+import dashboardicon from "../assets/activity.svg"
+import patientsicon from "../assets/profile-2user.svg"
+import foldericon from "../assets/Outline.svg"
+import logouticon from "../assets/logout.svg"
 
 interface SidebarProps {
   isOpen: boolean;
@@ -8,9 +12,9 @@ interface SidebarProps {
 }
 
 const navItems = [
-  { label: "Dashboard", to: "/dashboard", icon: LucideLayoutDashboard },
-  { label: "Patients", to: "/patients", icon: LucideUsers },
-  { label: "History", to: "/patient-history", icon: LucideFolder}
+  { label: "Dashboard", to: "/dashboard", icon: dashboardicon },
+  { label: "Patients", to: "/patients", icon: patientsicon },
+  { label: "History", to: "/patient-history", icon: foldericon}
 ];
 
 const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
@@ -64,7 +68,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                 }`
               }
             >
-              <Icon className="size-5 shrink-0" />
+              <img src={Icon} alt={label} className="w-6 h-6" />
               {label}
             </NavLink>
           ))}
@@ -75,7 +79,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           onClick={handleLogout}
           className="mt-auto flex items-center gap-3 px-3 py-2 rounded-md text-[14px] text-[#6B7C93] hover:bg-[#F8F9FF] cursor-pointer"
         >
-          <LucideLogOut className="size-5 shrink-0" />
+          <img src={logouticon} className="size-5 shrink-0" />
           Log Out
         </button>
       </aside>

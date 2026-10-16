@@ -109,7 +109,7 @@ const AdminLogin = () => {
                 onClick={() => navigate("/login")}
                 className="text-primary font-medium hover:underline cursor-pointer"
             >
-                ⟵ Back to Sign in
+                 Back to Sign in
             </button>
             </div>
         </form>

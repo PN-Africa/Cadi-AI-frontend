@@ -1,7 +1,9 @@
 import { LucideMenu } from "lucide-react";
 import { useAuthStore } from "../auth/auth";
 import Notifications from "./Notification";
+import SearchBar from "./SearchBar";
 import type { DashboardAlert } from "../services/apiDashboard";
+import profileicon from "../assets/profile-circle.svg"
 
 interface NavbarProps {
   onMenuClick: () => void;
@@ -12,11 +14,11 @@ const Navbar = ({ onMenuClick, notifications = [] }: NavbarProps) => {
   const user = useAuthStore((state) => state.user);
 
   const displayName = user?.name?.trim() || "";
-  const initial = displayName.charAt(0).toUpperCase() || "U";
+  // const initial = displayName.charAt(0).toUpperCase() || "U";
 
   return (
-    <header className="sticky top-0 z-20 bg-[#F8F9FF] px-4 sm:px-6 lg:px-8 py-3 lg:py-6 flex items-center justify-between gap-3">
-      <div className="flex items-center gap-6 min-w-0">
+    <header className="sticky top-0 z-20 bg-[#F8F9FF] px-4 sm:px-6 lg:px-8 py-3 lg:py-6 flex flex-wrap items-center justify-between gap-3">
+      <div className="flex items-center lg:gap-15 min-w-0 flex-1">
         <button
           type="button"
           onClick={onMenuClick}
@@ -29,17 +31,15 @@ const Navbar = ({ onMenuClick, notifications = [] }: NavbarProps) => {
         <p className="font-semibold text-[16px] sm:text-[24px] lg:text-[32px] text-primary truncate">
           Welcome Back{displayName ? `, ${displayName}` : ""}
         </p>
+
+        <div className="order-last w-full md:order-none md:w-72 lg:w-120">
+          <SearchBar />
+        </div>
       </div>
 
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
         <Notifications items={notifications} />
-        <div
-          className="size-9 rounded-full bg-[#1F3A5F] text-white flex items-center justify-center text-[14px] font-medium"
-          title={displayName || undefined}
-          aria-hidden="true"
-        >
-          {initial}
-        </div>
+        <img src={profileicon} className="size-7 shrink-0" />
       </div>
     </header>
   );
