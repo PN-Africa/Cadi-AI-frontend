@@ -223,7 +223,7 @@ const ErrorState = ({ onRetry }: { onRetry: () => void }) => (
 );
 
 const EmptyState = () => (
-  <div className="bg-white border border-[#C6C6CD99] rounded-[2rem] p-8 sm:p-10 flex flex-col items-center text-center gap-3">
+  <div className="bg-white border border-[#C6C6CD99] rounded-xl p-8 sm:p-10 flex flex-col items-center text-center gap-3">
     <div className="bg-[#EEF3FC] rounded-lg p-3">
       <img src={usericon} alt="" className="size-6 text-[#0D469C]" />
     </div>
