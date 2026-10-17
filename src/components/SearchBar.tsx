@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { LucideSearch } from "lucide-react";
 import searchicon from "../assets/search-normal.svg"
 
 interface SearchBarProps {
