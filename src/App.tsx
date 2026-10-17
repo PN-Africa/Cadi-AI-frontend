@@ -13,7 +13,7 @@ import Layout from "./layout/Layout";
 import Dashboard from "./pages/Dashboard";
 import PatientList from "./pages/PatientList";
 import Patient from "./pages/Patient";
-import PatientMonitoring from "./pages/PatientMonitoring";
+// import PatientMonitoring from "./pages/PatientMonitoring";
 import PatientActivity from "./pages/PatientActivity";
 
 const LegacyPatientRedirect = () => {
@@ -61,7 +61,7 @@ const router = createBrowserRouter([
             path: "/patient/:id",
             element: <Patient />,
             children: [
-              { index: true, element: <PatientMonitoring /> },
+              // { index: true, element: <PatientMonitoring /> },
               { path: "activity", element: <PatientActivity /> },
             ],
           },
