@@ -3,8 +3,6 @@ import { Link, useOutletContext } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
   LucideAlertTriangle,
-  LucideCheckCircle2,
-  LucideOctagonAlert,
   LucideRefreshCw,
 } from "lucide-react";
 import usericon from "../assets/profile-2user.svg"
@@ -23,21 +21,21 @@ type LoadStatus = "loading" | "error" | "success";
 
 const statusStyles: Record<
   DashboardPatientStatus,
-  { icon: typeof LucideCheckCircle2; badge: string }
+  { badge: string }
 > = {
-  Normal: { icon: LucideCheckCircle2, badge: "bg-[#E7F6EC] text-[#1E7D3B]" },
-  "Needs Attention": { icon: LucideAlertTriangle, badge: "bg-[#FFF8E6] text-[#8A6116]" },
-  Emergency: { icon: LucideOctagonAlert, badge: "bg-[#FDECEC] text-[#8A1F1F]" },
+  Normal: { badge: "bg-[#E7F6EC] text-[#1E7D3B]" },
+  "Needs Attention": { badge: "bg-[#FFF8E6] text-[#8A6116]" },
+  Emergency: { badge: "bg-[#FDECEC] text-[#8A1F1F]" },
 };
 
 const StatusBadge = ({ status }: { status: DashboardPatientStatus }) => {
-  const { icon: Icon, badge } = statusStyles[status];
+  const { badge } = statusStyles[status];
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1 text-[12px] sm:text-[13px] font-medium ${badge}`}
+      className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1 text-[12px] sm:text-[13px] font-medium ${badge}`}
     >
-      <Icon className="size-4 shrink-0" />
+      {/* <Icon className="size-4 shrink-0" /> */}
       {status}
     </span>
   );
@@ -46,16 +44,15 @@ const StatusBadge = ({ status }: { status: DashboardPatientStatus }) => {
 interface SummaryCardProps {
   label: string;
   value: number;
-  icon: typeof usericon;
   iconBg: string;
   iconColor: string;
 }
 
-const SummaryCard = ({ label, value, icon: Icon, iconBg, iconColor }: SummaryCardProps) => (
-  <div className="bg-white border border-[#C6C6CD99] rounded-md p-4 sm:p-5 flex items-center gap-3">
-    <div className={`${iconBg} rounded-md p-2`}>
+const SummaryCard = ({ label, value }: SummaryCardProps) => (
+  <div className="bg-white border border-[#C6C6CD99] rounded-lg p-4 sm:p-5 flex items-center gap-3">
+    {/* <div className={`${iconBg} rounded-lg p-2`}>
       <Icon className={`size-6 ${iconColor}`} />
-    </div>
+    </div> */}
     <div>
       <p className="text-[20px] sm:text-[22px] font-semibold text-primary">{value}</p>
       <p className="text-[12px] sm:text-[13px] text-[#6B7C93]">{label}</p>
@@ -87,7 +84,7 @@ const StatusOverview = ({
   });
 
   return (
-    <section className="bg-white border border-[#C6C6CD99] rounded-md p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-around gap-6">
+    <section className="bg-white border border-[#C6C6CD99] rounded-lg p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-around gap-6">
       <div>
         <h2 className="font-semibold text-[15px] sm:text-[16px] text-primary mb-3">
           Patient Status
@@ -203,9 +200,9 @@ const PatientsTable = ({ patients }: { patients: DashboardPatient[] }) => {
 const ErrorState = ({ onRetry }: { onRetry: () => void }) => (
   <div
     role="alert"
-    className="bg-white border border-[#C6C6CD99] rounded-md p-8 sm:p-10 flex flex-col items-center text-center gap-3"
+    className="bg-white border border-[#C6C6CD99] rounded-lg p-8 sm:p-10 flex flex-col items-center text-center gap-3"
   >
-    <div className="bg-[#FDECEC] rounded-md p-3">
+    <div className="bg-[#FDECEC] rounded-lg p-3">
       <LucideAlertTriangle className="size-6 text-[#8A1F1F]" />
     </div>
     <p className="font-semibold text-[16px] sm:text-[18px] text-primary">
@@ -217,7 +214,7 @@ const ErrorState = ({ onRetry }: { onRetry: () => void }) => (
     <button
       type="button"
       onClick={onRetry}
-      className="text-white bg-[#3B82F6] cursor-pointer border-[1.5px] rounded-md border-[#3B82F6] px-4 py-2 text-[13px] sm:text-[14px] flex items-center gap-2"
+      className="text-white bg-[#3B82F6] cursor-pointer border-[1.5px] rounded-lg border-[#3B82F6] px-4 py-2 text-[13px] sm:text-[14px] flex items-center gap-2"
     >
       <LucideRefreshCw className="size-4" />
       Try Again
@@ -226,8 +223,8 @@ const ErrorState = ({ onRetry }: { onRetry: () => void }) => (
 );
 
 const EmptyState = () => (
-  <div className="bg-white border border-[#C6C6CD99] rounded-md p-8 sm:p-10 flex flex-col items-center text-center gap-3">
-    <div className="bg-[#EEF3FC] rounded-md p-3">
+  <div className="bg-white border border-[#C6C6CD99] rounded-[2rem] p-8 sm:p-10 flex flex-col items-center text-center gap-3">
+    <div className="bg-[#EEF3FC] rounded-lg p-3">
       <img src={usericon} alt="" className="size-6 text-[#0D469C]" />
     </div>
     <p className="font-semibold text-[16px] sm:text-[18px] text-primary">
@@ -280,7 +277,7 @@ const Dashboard = () => {
       {status === "loading" && (
         <>
           <Loading variant="cards" label="Loading dashboard" />
-          <div className="bg-white border border-[#C6C6CD99] rounded-md">
+          <div className="bg-white border border-[#C6C6CD99] rounded-lg">
             <Loading variant="table" rows={5} label="Loading patients" />
           </div>
         </>
@@ -296,21 +293,19 @@ const Dashboard = () => {
             <SummaryCard
               label="Total Patients Monitored"
               value={data.metrics.totalPatientsMonitored}
-              icon={usericon}
+              // icon={usericon}
               iconBg="bg-[#EEF3FC]"
               iconColor="text-[#0D469C]"
             />
             <SummaryCard
               label="Needs Attention"
               value={data.metrics.totalPatientsNeedingAttention}
-              icon={LucideAlertTriangle}
               iconBg="bg-[#FFF8E6]"
               iconColor="text-[#8A6116]"
             />
             <SummaryCard
               label="Emergency Alerts"
               value={data.metrics.totalEmergencyAlerts}
-              icon={LucideOctagonAlert}
               iconBg="bg-[#FDECEC]"
               iconColor="text-[#8A1F1F]"
             />
@@ -321,7 +316,7 @@ const Dashboard = () => {
             statusBreakdown={data.statusBreakdown}
           />
 
-          <section className="bg-white border border-[#C6C6CD99] rounded-md overflow-hidden">
+          <section className="bg-white border border-[#C6C6CD99] rounded-lg overflow-hidden">
             <PatientsTable patients={data.patients} />
             <div className="flex items-center px-4 py-3 border-t border-[#C6C6CD99]">
               <p className="text-[12px] sm:text-[13px] text-[#6B7C93]">
