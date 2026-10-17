@@ -1,25 +1,28 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { LucideX } from "lucide-react";
 import { useAuthStore } from "../auth/auth";
 import dashboardicon from "../assets/activity.svg"
 import patientsicon from "../assets/profile-2user.svg"
 import foldericon from "../assets/Outline.svg"
 import logouticon from "../assets/logout.svg"
+import dashboardiconActive from "../assets/activity-active.svg"
+import patientsiconActive from "../assets/profile-2user-active.svg"
+
 
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const navItems = [
-  { label: "Dashboard", to: "/dashboard", icon: dashboardicon },
-  { label: "Patients", to: "/patients", icon: patientsicon },
-  { label: "History", to: "/patient-history", icon: foldericon}
-];
-
 const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
   const clearAuth = useAuthStore((state) => state.clearAuth);
+  const navItems = [
+    { label: "Dashboard", to: "/dashboard", icon: dashboardicon, activeIcon: dashboardiconActive },
+    { label: "Patients", to: "/patients", icon: patientsicon, activeIcon: patientsiconActive },
+    { label: "History", to: id ? `/patients/${id}/history` : `/patients/${id}`, icon: foldericon, activeIcon: foldericon },
+  ];
 
   const handleLogout = () => {
     clearAuth();
@@ -55,7 +58,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         </div>
 
         <nav className="mt-6 flex flex-col gap-1">
-          {navItems.map(({ label, to, icon: Icon }) => (
+          {navItems.map(({ label, to, icon: icon, activeIcon: activeIcon }) => (
             <NavLink
               key={to}
               to={to}
@@ -63,13 +66,17 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2 rounded-md text-[14px] ${
                   isActive
-                    ? "text-[#0D469C] font-medium"
+                    ? "text-[#2563EB] font-medium"
                     : "text-[#6B7C93] hover:bg-[#F8F9FF]"
                 }`
               }
             >
-              <img src={Icon} alt={label} className="w-6 h-6" />
-              {label}
+            {({ isActive }) => (
+              <>
+                <img src={isActive ? activeIcon : icon} alt="" className="w-6 h-6 shrink-0" />
+                {label}
+              </>
+            )}
             </NavLink>
           ))}
         </nav>

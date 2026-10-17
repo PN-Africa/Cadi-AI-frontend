@@ -8,9 +8,9 @@ import Layout from "./layout/Layout";
 import Dashboard from "./pages/Dashboard";
 import PatientList from "./pages/PatientList";
 import Patient from "./pages/Patient";
+import PatientHistory from "./pages/PatientHistory";
 
 const router = createBrowserRouter([
-  // Public routes
   {
     path: "/",
     element: <Navigate to="/login" replace />,
@@ -50,6 +50,10 @@ const router = createBrowserRouter([
             path: "/patients/:id",
             element: <Patient />,
           },
+          {
+            path: "/patients/:id/history",
+            element: <PatientHistory />,
+          }
         ],
       },
     ],

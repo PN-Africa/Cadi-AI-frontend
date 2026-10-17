@@ -6,31 +6,31 @@ import {
   LucideCheckCircle2,
   LucideOctagonAlert,
   LucideRefreshCw,
-  LucideUsers,
 } from "lucide-react";
+import usericon from "../assets/profile-2user.svg"
 import Loading from "../components/Loading";
-import Pagination from "../components/Pagination";
 import type { LayoutContext } from "../layout/Layout";
 import {
   getDashboard,
   type DashboardData,
   type DashboardPatient,
-  type DashboardSummary,
-  type PatientStatus,
+  type DashboardMetrics,
+  type DashboardStatusBreakdown,
+  type DashboardPatientStatus,
 } from "../services/apiDashboard";
 
 type LoadStatus = "loading" | "error" | "success";
 
 const statusStyles: Record<
-  PatientStatus,
+  DashboardPatientStatus,
   { icon: typeof LucideCheckCircle2; badge: string }
 > = {
   Normal: { icon: LucideCheckCircle2, badge: "bg-[#E7F6EC] text-[#1E7D3B]" },
   "Needs Attention": { icon: LucideAlertTriangle, badge: "bg-[#FFF8E6] text-[#8A6116]" },
-  Alert: { icon: LucideOctagonAlert, badge: "bg-[#FDECEC] text-[#8A1F1F]" },
+  Emergency: { icon: LucideOctagonAlert, badge: "bg-[#FDECEC] text-[#8A1F1F]" },
 };
 
-const StatusBadge = ({ status }: { status: PatientStatus }) => {
+const StatusBadge = ({ status }: { status: DashboardPatientStatus }) => {
   const { icon: Icon, badge } = statusStyles[status];
 
   return (
@@ -46,7 +46,7 @@ const StatusBadge = ({ status }: { status: PatientStatus }) => {
 interface SummaryCardProps {
   label: string;
   value: number;
-  icon: typeof LucideUsers;
+  icon: typeof usericon;
   iconBg: string;
   iconColor: string;
 }
@@ -63,11 +63,17 @@ const SummaryCard = ({ label, value, icon: Icon, iconBg, iconColor }: SummaryCar
   </div>
 );
 
-const StatusOverview = ({ summary }: { summary: DashboardSummary }) => {
+const StatusOverview = ({
+  metrics,
+  statusBreakdown,
+}: {
+  metrics: DashboardMetrics;
+  statusBreakdown: DashboardStatusBreakdown;
+}) => {
   const segments = [
-    { label: "Normal", value: summary.normal, color: "#22C55E" },
-    { label: "Needs Attention", value: summary.needsAttention, color: "#FACC15" },
-    { label: "Alerts", value: summary.alerts, color: "#EF4444" },
+    { label: "Normal", value: statusBreakdown.normal, color: "#22C55E" },
+    { label: "Needs Attention", value: statusBreakdown.needsAttention, color: "#FACC15" },
+    { label: "Emergency", value: statusBreakdown.emergency, color: "#EF4444" },
   ];
 
   const total = segments.reduce((sum, segment) => sum + segment.value, 0);
@@ -107,7 +113,7 @@ const StatusOverview = ({ summary }: { summary: DashboardSummary }) => {
       <div
         className="relative size-40 sm:size-44 mx-auto sm:mx-0"
         role="img"
-        aria-label={`${summary.totalPatients} patients: ${summary.normal} normal, ${summary.needsAttention} need attention, ${summary.alerts} alerts`}
+        aria-label={`${metrics.totalPatientsMonitored} patients: ${statusBreakdown.normal} normal, ${statusBreakdown.needsAttention} need attention, ${statusBreakdown.emergency} emergency`}
       >
         <svg viewBox="0 0 36 36" className="size-full -rotate-90">
           <circle
@@ -136,7 +142,7 @@ const StatusOverview = ({ summary }: { summary: DashboardSummary }) => {
           )}
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <p className="text-[22px] font-semibold text-primary">{summary.totalPatients}</p>
+          <p className="text-[22px] font-semibold text-primary">{metrics.totalPatientsMonitored}</p>
           <p className="text-[12px] text-[#6B7C93]">Patients</p>
         </div>
       </div>
@@ -157,11 +163,12 @@ const PatientsTable = ({ patients }: { patients: DashboardPatient[] }) => {
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[560px] text-left">
+      <table className="w-full min-w-[720px] text-left">
         <thead className="bg-[#EEF4FF]">
           <tr>
             <th scope="col" className={headerClass}>Patient</th>
-            <th scope="col" className={headerClass}>Recent Activity</th>
+            <th scope="col" className={headerClass}>Patient ID</th>
+            <th scope="col" className={headerClass}>Current Condition</th>
             <th scope="col" className={headerClass}>Status</th>
           </tr>
         </thead>
@@ -175,14 +182,12 @@ const PatientsTable = ({ patients }: { patients: DashboardPatient[] }) => {
                 >
                   {patient.name}
                 </Link>
-                {patient.patientCode && (
-                  <span className="block text-[11px] sm:text-[12px] text-[#6B7C93]">
-                    {patient.patientCode}
-                  </span>
-                )}
               </td>
               <td className="px-4 py-3 text-[13px] sm:text-[14px] text-primary">
-                {patient.recentActivity}
+                {patient.patientId}
+              </td>
+              <td className="px-4 py-3 text-[13px] sm:text-[14px] text-primary">
+                {patient.currentCondition}
               </td>
               <td className="px-4 py-3">
                 <StatusBadge status={patient.status} />
@@ -223,7 +228,7 @@ const ErrorState = ({ onRetry }: { onRetry: () => void }) => (
 const EmptyState = () => (
   <div className="bg-white border border-[#C6C6CD99] rounded-md p-8 sm:p-10 flex flex-col items-center text-center gap-3">
     <div className="bg-[#EEF3FC] rounded-md p-3">
-      <LucideUsers className="size-6 text-[#0D469C]" />
+      <img src={usericon} alt="" className="size-6 text-[#0D469C]" />
     </div>
     <p className="font-semibold text-[16px] sm:text-[18px] text-primary">
       No patients to show yet
@@ -238,54 +243,35 @@ const Dashboard = () => {
   const { setNotifications } = useOutletContext<LayoutContext>();
   const [data, setData] = useState<DashboardData | null>(null);
   const [status, setStatus] = useState<LoadStatus>("loading");
-  const [page, setPage] = useState(1);
-  const [isPaging, setIsPaging] = useState(false);
-
-  const hasData = useRef(false);
   const requestId = useRef(0);
 
-  const loadDashboard = useCallback(async (targetPage: number) => {
+  const loadDashboard = useCallback(async () => {
     const currentRequest = ++requestId.current;
-
-    if (hasData.current) {
-      setIsPaging(true);
-    } else {
-      setStatus("loading");
-    }
+    setStatus("loading");
 
     try {
-      const result = await getDashboard(targetPage);
+      const result = await getDashboard();
 
       if (currentRequest !== requestId.current) return;
 
       setData(result);
-      setNotifications(result.alerts);
-      setPage(targetPage);
-      hasData.current = true;
+      setNotifications([]);
       setStatus("success");
     } catch (error) {
       if (currentRequest !== requestId.current) return;
 
-      console.log(error);
-
-      if (hasData.current) {
-        toast.error("Unable to load that page. Please try again.");
-      } else {
-        setStatus("error");
-      }
-    } finally {
-      if (currentRequest === requestId.current) {
-        setIsPaging(false);
-      }
+      console.error("Unable to load dashboard", error);
+      toast.error("Unable to load dashboard. Please try again.");
+      setStatus("error");
     }
   }, [setNotifications]);
 
   useEffect(() => {
-    loadDashboard(1);
+    loadDashboard();
   }, [loadDashboard]);
 
   const isEmpty =
-    data !== null && data.summary.totalPatients === 0 && data.patients.length === 0;
+    data !== null && data.metrics.totalPatientsMonitored === 0 && data.patients.length === 0;
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 flex flex-col gap-6">
@@ -300,7 +286,7 @@ const Dashboard = () => {
         </>
       )}
 
-      {status === "error" && <ErrorState onRetry={() => loadDashboard(1)} />}
+      {status === "error" && <ErrorState onRetry={loadDashboard} />}
 
       {status === "success" && data && isEmpty && <EmptyState />}
 
@@ -309,47 +295,39 @@ const Dashboard = () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <SummaryCard
               label="Total Patients Monitored"
-              value={data.summary.totalPatients}
-              icon={LucideUsers}
+              value={data.metrics.totalPatientsMonitored}
+              icon={usericon}
               iconBg="bg-[#EEF3FC]"
               iconColor="text-[#0D469C]"
             />
             <SummaryCard
               label="Needs Attention"
-              value={data.summary.needsAttention}
+              value={data.metrics.totalPatientsNeedingAttention}
               icon={LucideAlertTriangle}
               iconBg="bg-[#FFF8E6]"
               iconColor="text-[#8A6116]"
             />
             <SummaryCard
-              label="Active Alerts"
-              value={data.summary.alerts}
+              label="Emergency Alerts"
+              value={data.metrics.totalEmergencyAlerts}
               icon={LucideOctagonAlert}
               iconBg="bg-[#FDECEC]"
               iconColor="text-[#8A1F1F]"
             />
           </div>
 
-          <StatusOverview summary={data.summary} />
+          <StatusOverview
+            metrics={data.metrics}
+            statusBreakdown={data.statusBreakdown}
+          />
 
           <section className="bg-white border border-[#C6C6CD99] rounded-md overflow-hidden">
-            {isPaging ? (
-              <Loading variant="table" rows={5} label="Loading patients" />
-            ) : (
-              <PatientsTable patients={data.patients} />
-            )}
-
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-[#C6C6CD99]">
+            <PatientsTable patients={data.patients} />
+            <div className="flex items-center px-4 py-3 border-t border-[#C6C6CD99]">
               <p className="text-[12px] sm:text-[13px] text-[#6B7C93]">
-                {data.pagination.total}{" "}
-                {data.pagination.total === 1 ? "patient" : "patients"}
+                {data.patients.length}{" "}
+                {data.patients.length === 1 ? "patient" : "patients"}
               </p>
-              <Pagination
-                page={page}
-                totalPages={data.pagination.totalPages}
-                onPageChange={loadDashboard}
-                disabled={isPaging}
-              />
             </div>
           </section>
         </>

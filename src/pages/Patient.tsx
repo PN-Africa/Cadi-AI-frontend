@@ -35,8 +35,6 @@ interface PatientDetail {
   activeAlert?: PatientAlertData;
 }
 
-// TODO: replace with real API wiring (Monitoring Data Service) — current
-// readings only, no history, per MVP scope for this view.
 const mockPatientDetail: Record<string, PatientDetail> = {
   p1: {
     id: "p1",
