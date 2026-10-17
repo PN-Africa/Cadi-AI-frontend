@@ -1,4 +1,4 @@
-import { statusLabels, type PatientStatus } from "../services/patientTypes";
+import { statusLabels, type PatientStatus } from "../data/patientTypes";
 
 const badgeStyles: Record<PatientStatus, string> = {
   normal: "bg-[#BBF7D0] text-[#15803D]",

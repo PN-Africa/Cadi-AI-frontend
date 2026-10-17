@@ -1,4 +1,9 @@
-import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+  useParams,
+} from "react-router-dom";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import AdminLogin from "./pages/AdminLogin";
@@ -8,7 +13,13 @@ import Layout from "./layout/Layout";
 import Dashboard from "./pages/Dashboard";
 import PatientList from "./pages/PatientList";
 import Patient from "./pages/Patient";
-import PatientHistory from "./pages/PatientHistory";
+import PatientMonitoring from "./pages/PatientMonitoring";
+import PatientActivity from "./pages/PatientActivity";
+
+const LegacyPatientRedirect = () => {
+  const { id } = useParams();
+  return <Navigate to={`/patient/${id}`} replace />;
+};
 
 const router = createBrowserRouter([
   {
@@ -47,13 +58,18 @@ const router = createBrowserRouter([
             element: <PatientList />,
           },
           {
-            path: "/patients/:id",
+            path: "/patient/:id",
             element: <Patient />,
+            children: [
+              { index: true, element: <PatientMonitoring /> },
+              { path: "activity", element: <PatientActivity /> },
+            ],
           },
           {
-            path: "/patients/:id/history",
-            element: <PatientHistory />,
-          }
+            path: "/patients/:id",
+            element: <LegacyPatientRedirect />,
+          },
+
         ],
       },
     ],

@@ -1,225 +1,131 @@
-import { useParams, useNavigate } from "react-router-dom";
-import {
-  LucideArrowLeft,
-  LucideHeartPulse,
-  LucideDroplet,
-  LucideThermometer,
-  LucideActivity,
-  LucideMapPin,
-  LucideUserCircle2,
-  LucideCheckCircle2,
-  LucideAlertTriangle,
-  LucideOctagonAlert,
-} from "lucide-react";
-import PatientAlert, { type PatientAlertData } from "../components/PatientAlert";
+import type { ReactNode } from "react";
+import { Link, NavLink, Outlet, useNavigate, useParams } from "react-router-dom";
+import { LucideArrowLeft } from "lucide-react";
+import StatusBadge from "../components/StatusBadge";
+import Loading from "../components/Loading";
+import { usePatient } from "../data/usePatients";
 
-type PatientStatus = "Normal" | "Needs Attention" | "Alert";
+const getInitials = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word[0].toUpperCase())
+    .join("");
 
-interface VitalReading {
-  label: string;
-  value: string | null;
-  unit?: string;
-  icon: typeof LucideHeartPulse;
-  updatedAt: string | null;
-}
+const tabClass = ({ isActive }: { isActive: boolean }) =>
+  `justify-self-center rounded-md border-b-2 px-4 py-1.5 text-[13px] sm:text-[14px] font-medium ${
+    isActive
+      ? "border-[#1D4ED8] bg-[#BFDBFE] text-[#1D4ED8]"
+      : "border-transparent text-primary hover:bg-white"
+  }`;
 
-interface PatientDetail {
-  id: string;
-  name: string;
-  age: number;
-  room: string;
-  status: PatientStatus;
-  caregiverName: string;
-  caregiverRole: string;
-  vitals: VitalReading[];
-  activeAlert?: PatientAlertData;
-}
+const MessageCard = ({
+  title,
+  body,
+  children,
+}: {
+  title: string;
+  body: string;
+  children: ReactNode;
+}) => (
+  <div className="p-4 sm:p-6 lg:p-8">
+    <div
+      role="alert"
+      className="rounded-xl border border-[#C6C6CD99] bg-white p-8 sm:p-10 flex flex-col items-center text-center gap-3"
+    >
+      <p className="font-semibold text-[16px] sm:text-[18px] text-primary">{title}</p>
+      <p className="max-w-md text-[13px] sm:text-[14px] text-[#6B7C93]">{body}</p>
+      {children}
+    </div>
+  </div>
+);
 
-const mockPatientDetail: Record<string, PatientDetail> = {
-  p1: {
-    id: "p1",
-    name: "Margaret Owusu",
-    age: 78,
-    room: "Room 4",
-    status: "Alert",
-    caregiverName: "Nurse Adaeze Nwosu",
-    caregiverRole: "Caregiver",
-    vitals: [
-      { label: "Heart Rate", value: "112", unit: "bpm", icon: LucideHeartPulse, updatedAt: "2 min ago" },
-      { label: "Blood Oxygen", value: "94", unit: "%", icon: LucideDroplet, updatedAt: "2 min ago" },
-      { label: "Temperature", value: "37.8", unit: "°C", icon: LucideThermometer, updatedAt: "5 min ago" },
-      { label: "Movement", value: null, unit: undefined, icon: LucideActivity, updatedAt: null },
-      { label: "Position", value: "Lying down", unit: undefined, icon: LucideMapPin, updatedAt: "2 min ago" },
-    ],
-    activeAlert: {
-      id: "a1",
-      patientId: "p1",
-      patientName: "Margaret Owusu",
-      type: "Possible Fall Detected",
-      severity: "Alert",
-      reason: "A sudden change in position and prolonged stillness was detected.",
-      timestamp: "2 min ago",
-    },
-  },
-  p2: {
-    id: "p2",
-    name: "Tunde Bakare",
-    age: 82,
-    room: "Room 7",
-    status: "Needs Attention",
-    caregiverName: "Nurse Adaeze Nwosu",
-    caregiverRole: "Caregiver",
-    vitals: [
-      { label: "Heart Rate", value: "76", unit: "bpm", icon: LucideHeartPulse, updatedAt: "14 min ago" },
-      { label: "Blood Oxygen", value: "97", unit: "%", icon: LucideDroplet, updatedAt: "14 min ago" },
-      { label: "Temperature", value: "36.9", unit: "°C", icon: LucideThermometer, updatedAt: "14 min ago" },
-      { label: "Movement", value: "No movement detected", unit: undefined, icon: LucideActivity, updatedAt: "45 min ago" },
-      { label: "Position", value: "Seated", unit: undefined, icon: LucideMapPin, updatedAt: "14 min ago" },
-    ],
-    activeAlert: {
-      id: "a2",
-      patientId: "p2",
-      patientName: "Tunde Bakare",
-      type: "Prolonged Inactivity",
-      severity: "Needs Attention",
-      reason: "No movement detected for over 45 minutes.",
-      timestamp: "14 min ago",
-    },
-  },
-  p3: {
-    id: "p3",
-    name: "Grace Afolabi",
-    age: 69,
-    room: "Room 2",
-    status: "Normal",
-    caregiverName: "Nurse Bola Martins",
-    caregiverRole: "Caregiver",
-    vitals: [
-      { label: "Heart Rate", value: "72", unit: "bpm", icon: LucideHeartPulse, updatedAt: "20 min ago" },
-      { label: "Blood Oxygen", value: "98", unit: "%", icon: LucideDroplet, updatedAt: "20 min ago" },
-      { label: "Temperature", value: "36.7", unit: "°C", icon: LucideThermometer, updatedAt: "20 min ago" },
-      { label: "Movement", value: "Normal activity", unit: undefined, icon: LucideActivity, updatedAt: "20 min ago" },
-      { label: "Position", value: "Walking", unit: undefined, icon: LucideMapPin, updatedAt: "20 min ago" },
-    ],
-  },
-};
-
-const statusStyles: Record<
-  PatientStatus,
-  { icon: typeof LucideCheckCircle2; text: string; label: string }
-> = {
-  Normal: { icon: LucideCheckCircle2, text: "text-[#1E7D3B]", label: "Normal" },
-  "Needs Attention": { icon: LucideAlertTriangle, text: "text-[#8A6116]", label: "Needs Attention" },
-  Alert: { icon: LucideOctagonAlert, text: "text-[#8A1F1F]", label: "Alert" },
-};
+const primaryButton =
+  "mt-1 cursor-pointer rounded-md border-[1.5px] border-[#1F3A5F] bg-[#1F3A5F] px-4 py-2 text-[13px] sm:text-[14px] text-white";
 
 const Patient = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { patient, isLoading, isNotFound, hasError, reload } = usePatient(id);
 
-  const patient = id ? mockPatientDetail[id] : undefined;
+  if (isLoading) {
+    return <Loading variant="spinner" label="Loading patient" />;
+  }
 
-  if (!patient) {
+  if (hasError) {
     return (
-      <div className="min-h-screen bg-[#F8F9FF] p-4 sm:p-6 lg:p-10">
-        <button
-          type="button"
-          onClick={() => navigate("/patients")}
-          className="text-primary text-[13px] sm:text-[14px] flex items-center gap-1.5 hover:underline cursor-pointer"
-        >
-          <LucideArrowLeft className="size-4" />
-          Back to Patients
+      <MessageCard
+        title="We couldn't load this patient"
+        body="Check your connection, then try again."
+      >
+        <button type="button" onClick={reload} className={primaryButton}>
+          Try Again
         </button>
-        <p className="text-[14px] text-[#6B7C93] mt-6">Patient not found.</p>
-      </div>
+      </MessageCard>
     );
   }
 
-  const style = statusStyles[patient.status];
-  const StatusIcon = style.icon;
+  if (isNotFound || !patient) {
+    return (
+      <MessageCard
+        title="We couldn't find that patient"
+        body="The patient ID in this link doesn't match anyone you're monitoring. Check the link or head back to your patient list."
+      >
+        <Link to="/patients" className={primaryButton}>
+          Back to Patients
+        </Link>
+      </MessageCard>
+    );
+  }
+
+  const details = [`ID • ${patient.patientCode}`, patient.age !== null ? `Age ${patient.age}` : null]
+    .filter(Boolean)
+    .join(" • ");
 
   return (
-    <div className="min-h-screen bg-[#F8F9FF] p-4 sm:p-6 lg:p-10">
-      <button
-        type="button"
-        onClick={() => navigate("/patients")}
-        className="text-primary text-[13px] sm:text-[14px] flex items-center gap-1.5 hover:underline cursor-pointer"
-      >
-        <LucideArrowLeft className="size-4" />
-        Back to Patients
-      </button>
+    <div className="p-4 sm:p-6 lg:p-8 flex flex-col gap-6">
+      <header className="flex flex-col gap-3">
+        <button
+          type="button"
+          onClick={() => navigate("/patients")}
+          aria-label="Back to patients"
+          className="-ml-1 self-start rounded-md p-1 cursor-pointer hover:bg-white"
+        >
+          <LucideArrowLeft className="size-5 text-primary" />
+        </button>
 
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-4">
-        <div>
-          <p className="font-semibold text-[18px] sm:text-[20px] lg:text-[22px] text-primary">
-            {patient.name}
-          </p>
-          <p className="text-[13px] sm:text-sm lg:text-[14px] text-[#6B7C93]">
-            Age {patient.age} · {patient.room}
-          </p>
-        </div>
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <div
+              aria-hidden="true"
+              className="flex size-11 sm:size-12 shrink-0 items-center justify-center rounded-full bg-[#1F3A5F] text-[14px] sm:text-[15px] font-medium text-white"
+            >
+              {getInitials(patient.name)}
+            </div>
 
-        <p className={`text-[13px] sm:text-[14px] font-medium flex items-center gap-1.5 ${style.text}`}>
-          <StatusIcon className="size-5 shrink-0" />
-          {style.label}
-        </p>
-      </div>
-
-      {patient.activeAlert && (
-        <div className="mt-4">
-          <PatientAlert alert={patient.activeAlert} linkToPatient={false} />
-        </div>
-      )}
-
-      <div className="bg-white border border-[#C6C6CD99] rounded-md p-4 sm:p-6 mt-6">
-        <p className="font-semibold text-[15px] sm:text-[16px] text-primary mb-3">
-          Assigned Caregiver
-        </p>
-        <div className="flex items-center gap-3">
-          <div className="bg-[#EEF3FC] rounded-md p-2">
-            <LucideUserCircle2 className="size-6 text-[#0D469C]" />
+            <div className="min-w-0">
+              <h1 className="truncate font-bold text-[18px] sm:text-[20px] lg:text-[22px] text-primary">
+                {patient.name}
+              </h1>
+              <p className="text-[12px] sm:text-[13px] text-[#6B7C93]">{details}</p>
+            </div>
           </div>
-          <div>
-            <p className="text-[14px] text-primary font-medium">{patient.caregiverName}</p>
-            <p className="text-[12px] text-[#6B7C93]">{patient.caregiverRole}</p>
-          </div>
-        </div>
-      </div>
 
-      <div className="bg-white border border-[#C6C6CD99] rounded-md p-4 sm:p-6 mt-6">
-        <p className="font-semibold text-[15px] sm:text-[16px] text-primary mb-3">
-          Current Vitals
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {patient.vitals.map((vital) => {
-            const Icon = vital.icon;
-            const hasReading = vital.value !== null;
-
-            return (
-              <div
-                key={vital.label}
-                className="border border-[#C6C6CD99] rounded-md p-3 flex items-start gap-3"
-              >
-                <Icon className="size-5 text-[#0D469C] shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-[12px] text-[#6B7C93]">{vital.label}</p>
-                  {hasReading ? (
-                    <>
-                      <p className="text-[15px] text-primary font-semibold">
-                        {vital.value}
-                        {vital.unit ? ` ${vital.unit}` : ""}
-                      </p>
-                      <p className="text-[11px] text-[#6B7C93]">Updated {vital.updatedAt}</p>
-                    </>
-                  ) : (
-                    <p className="text-[13px] text-[#6B7C93] italic">No recent data</p>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+          <StatusBadge status={patient.status} className="shrink-0" />
         </div>
-      </div>
+      </header>
+
+      <nav aria-label="Patient sections" className="grid grid-cols-2">
+        <NavLink to={`/patient/${patient.id}`} end className={tabClass}>
+          Monitoring
+        </NavLink>
+        <NavLink to={`/patient/${patient.id}/activity`} className={tabClass}>
+          Activity
+        </NavLink>
+      </nav>
+
+      <Outlet context={{ patient }} />
     </div>
   );
 };

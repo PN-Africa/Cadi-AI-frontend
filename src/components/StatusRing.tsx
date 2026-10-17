@@ -1,4 +1,4 @@
-import { statusLabels, type PatientStatus } from "../services/patientTypes";
+import { statusLabels, type PatientStatus } from "../data/patientTypes";
 
 const ringColors: Record<PatientStatus, string> = {
   normal: "border-[#22C55E]",

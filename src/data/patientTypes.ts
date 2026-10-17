@@ -1,4 +1,3 @@
-
 export type PatientStatus = "normal" | "needs attention" | "emergency";
 
 export const statusLabels: Record<PatientStatus, string> = {
@@ -6,6 +5,13 @@ export const statusLabels: Record<PatientStatus, string> = {
   "needs attention": "Needs Attention",
   emergency: "Emergency",
 };
+
+export interface PatientSummary {
+  id: string;
+  display: string;
+  status: PatientStatus;
+  lastActivity: string;
+}
 
 export type PatientStatId = "heart-rate" | "temperature" | "blood-oxygen" | "movement";
 
@@ -20,17 +26,7 @@ export interface PatientStat {
 export interface StatusIndicator {
   id: string;
   label: string;
-  since: string;
-  level: PatientStatus;
-}
-
-export type ActivityDay = "today" | "yesterday";
-
-export interface ActivityEvent {
-  id: string;
-  label: string;
-  time: string;
-  day: ActivityDay;
+  minutesAgo: number | null;
   level: PatientStatus;
 }
 
@@ -38,12 +34,31 @@ export interface Patient {
   id: string;
   patientCode: string;
   name: string;
-  age: number;
-  avatarUrl?: string;
+  age: number | null;
   status: PatientStatus;
-  lastActivity: string;
   lastUpdated: string;
   stats: PatientStat[];
   indicators: StatusIndicator[];
-  activity: ActivityEvent[];
+}
+
+export interface MonitoringPoint {
+  timestamp: string;
+  heartRate: number;
+  bloodOxygen: number;
+  temperature: number;
+}
+
+export interface PatientMonitoring {
+  charts: MonitoringPoint[];
+  movementCalculation: string;
+  status: PatientStatus;
+}
+
+export interface ActivityEvent {
+  id: string;
+  type: string;
+  label: string;
+  description: string;
+  timestamp: string;
+  level: PatientStatus;
 }
