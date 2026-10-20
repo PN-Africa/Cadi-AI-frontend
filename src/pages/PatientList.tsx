@@ -76,9 +76,9 @@ const PatientList = () => {
                   aria-hidden="true"
                   className="col-start-2 row-start-1 flex items-center gap-[3px] justify-self-end sm:col-start-4"
                 >
-                  <span className="size-[5px] rounded-full bg-[#3B82F6]" />
-                  <span className="size-[5px] rounded-full bg-[#3B82F6]" />
-                  <span className="size-[5px] rounded-full bg-[#3B82F6]" />
+                  <span className="size-[5px] rounded-full bg-[#1D4ED8]" />
+                  <span className="size-[5px] rounded-full bg-[#1D4ED8]" />
+                  <span className="size-[5px] rounded-full bg-[#1D4ED8]" />
                 </div>
 
                 <div

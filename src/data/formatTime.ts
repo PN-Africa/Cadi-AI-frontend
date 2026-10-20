@@ -32,3 +32,8 @@ export const formatEventTime = (iso: string, includeDate = false): string => {
   const date = when.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   return `${date}, ${time}`;
 };
+export const formatEventDay = (iso: string): string => {
+  const when = new Date(iso);
+  if (Number.isNaN(when.getTime())) return "—";
+  return when.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
+};

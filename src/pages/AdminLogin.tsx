@@ -97,7 +97,7 @@ const AdminLogin = () => {
             </div>
 
             <button
-            className="text-white bg-[#3B82F6] cursor-pointer mt-6 lg:mt-[30px] border-[1.5px] rounded-md border-[#6B7C93] border-[#3B82F6] w-full py-4 disabled:bg-[#6B7C93] disabled:border-[#6B7C93] disabled:cursor-not-allowed"
+            className="text-white bg-[#1D4ED8] cursor-pointer mt-6 lg:mt-[30px] border-[1.5px] rounded-md border-[#6B7C93] border-[#3B82F6] w-full py-4 disabled:bg-[#6B7C93] disabled:border-[#6B7C93] disabled:cursor-not-allowed"
             disabled={isSubmitting}
             >
                 {isSubmitting ? "Sending link..." : "Proceed"}

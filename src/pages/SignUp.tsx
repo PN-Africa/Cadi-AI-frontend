@@ -285,7 +285,7 @@ const SignUp = () => {
             )}
 
             <button
-            className="text-white bg-[#3B82F6] cursor-pointer mt-6 lg:mt-[30px] border-[1.5px] rounded-lg border-[#6B7C93] w-full py-4 disabled:bg-grey-400 disabled:border-grey-500 disabled:cursor-not-allowed"
+            className="text-white bg-[#1D4ED8] cursor-pointer mt-6 lg:mt-[30px] border-[1.5px] rounded-lg border-[#6B7C93] w-full py-4 disabled:bg-grey-400 disabled:border-grey-500 disabled:cursor-not-allowed"
             disabled={isSubmitting}
             >
             {isSubmitting ? "Creating account..." : "Create Account"}
