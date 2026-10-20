@@ -24,6 +24,7 @@ export interface PatientDetailResponse {
   age: number;
   status: string;
   lastUpdated: string;
+  lastActivity: string;
   heartRate: number;
   bloodOxygen: number;
   temperature: number;
@@ -144,6 +145,7 @@ const toPatient = (raw: PatientDetailResponse): Patient => {
     patientCode: raw.patientIdCode,
     name: raw.name,
     age: raw.age ?? null,
+    lastActivity: raw.lastActivity,
     status: normalizeStatus(raw.status),
     lastUpdated: raw.lastUpdated,
     stats,
