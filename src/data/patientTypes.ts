@@ -30,6 +30,14 @@ export interface StatusIndicator {
   level: PatientStatus;
 }
 
+export interface PatientActivityItem {
+  id: string;
+  label: string;
+  time: string;
+  day: string;
+  level: PatientStatus;
+}
+
 export interface Patient {
   id: string;
   patientCode: string;
@@ -37,8 +45,10 @@ export interface Patient {
   age: number | null;
   status: PatientStatus;
   lastUpdated: string;
+  lastActivity: string | null;
   stats: PatientStat[];
   indicators: StatusIndicator[];
+  activity?: PatientActivityItem[];
 }
 
 export interface MonitoringPoint {
