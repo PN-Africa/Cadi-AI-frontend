@@ -22,6 +22,7 @@ export const formatRelativeTime = (iso: string, now: Date = new Date()): string 
   return text.endsWith("ago") ? text : `${text} ago`;
 };
 
+// ISO timestamp -> "10:09 AM", or "Oct 17, 10:09 AM" when the date is needed.
 export const formatEventTime = (iso: string, includeDate = false): string => {
   const when = new Date(iso);
   if (Number.isNaN(when.getTime())) return "—";
@@ -32,8 +33,26 @@ export const formatEventTime = (iso: string, includeDate = false): string => {
   const date = when.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   return `${date}, ${time}`;
 };
-export const formatEventDay = (iso: string): string => {
+
+// "Today", "Yesterday" or "Oct 17"
+export const formatEventDay = (iso: string, now: Date = new Date()): string => {
   const when = new Date(iso);
   if (Number.isNaN(when.getTime())) return "—";
-  return when.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
+
+  const dayStart = (date: Date) =>
+    new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+  const diffDays = Math.round((dayStart(now) - dayStart(when)) / 86400000);
+
+  if (diffDays === 0) return "Today";
+  if (diffDays === 1) return "Yesterday";
+  return when.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+};
+
+// For sentences: "today at 10:09 AM", "yesterday at 10:09 AM", "on Oct 17 at 10:09 AM"
+export const formatEventPhrase = (iso: string, now: Date = new Date()): string => {
+  const day = formatEventDay(iso, now);
+  const time = formatEventTime(iso);
+
+  if (day === "Today" || day === "Yesterday") return `${day.toLowerCase()} at ${time}`;
+  return `on ${day} at ${time}`;
 };

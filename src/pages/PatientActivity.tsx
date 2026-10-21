@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { Link, useOutletContext } from "react-router-dom";
 import { LucideChevronDown } from "lucide-react";
 import Loading from "../components/Loading";
 import StatusRing from "../components/StatusRing";
@@ -46,7 +46,7 @@ const PatientActivity = () => {
   return (
     <section className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="font-bold text-[18px] sm:text-[20px] lg:text-[24px] text-primary">
+        <h2 className="text-[22px] sm:text-[20px] lg:text-[24px] text-primary">
           Activity Timeline
         </h2>
 
@@ -55,7 +55,7 @@ const PatientActivity = () => {
             value={range}
             onChange={(event) => setRange(event.target.value as ActivityRange)}
             aria-label="Show activity for"
-            className="cursor-pointer appearance-none rounded-lg border border-[#6B7C93] bg-white py-1.5 pl-3 pr-9 text-[12px] sm:text-[13px] text-primary outline-none focus:border-[#1D4ED8]"
+            className="cursor-pointer appearance-none rounded-lg border border-[#6B7C93] bg-white py-1.5 pl-3 pr-9 text-[12px] sm:text-[14px] text-primary outline-none focus:border-[#1D4ED8]"
           >
             {rangeOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -96,9 +96,15 @@ const PatientActivity = () => {
         ) : (
           <ol aria-label="Activity timeline">
             {visibleEvents.map((event, index) => (
-              <li key={event.id} className="grid grid-cols-[minmax(0,1fr)_1.5rem] gap-x-3">
-                <div className="grid grid-cols-2 gap-3 border-b border-[#C6C6CD99] py-4 text-[13px] sm:text-[14px] text-primary">
-                  <span title={event.description || undefined}>{event.label}</span>
+              <li key={event.id} className="relative grid grid-cols-[minmax(0,1fr)_1.5rem] gap-x-3">
+                <div className="grid grid-cols-2 gap-3 border-b border-[#C6C6CD99] py-4 text-[12px] sm:text-[13px] text-primary">
+                  <Link
+                    to={`/patient/${patient.id}/activity/${encodeURIComponent(event.id)}`}
+                    title={event.description || undefined}
+                    className="after:absolute after:inset-0 after:content-['']"
+                  >
+                    {event.label}
+                  </Link>
                   <span>{formatEventTime(event.timestamp, range !== "today")}</span>
                 </div>
 

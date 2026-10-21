@@ -12,14 +12,14 @@ const PatientList = () => {
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 flex flex-col gap-4">
-      <h1 className="font-bold text-[20px] sm:text-[22px] lg:text-[24px] text-primary">
+      <h1 className="font-medium text-[20px] sm:text-[22px] lg:text-[24px] text-primary py-5">
         Patients
       </h1>
 
       <div role="table" aria-label="Patients" className="flex flex-col gap-3">
         <div
           role="row"
-          className={`hidden sm:grid ${columns} items-center gap-x-3 border border-transparent px-6 text-[12px] sm:text-[13px] font-semibold text-primary`}
+          className={`hidden sm:grid ${columns} items-center gap-x-3 border border-transparent px-6 text-[12px] sm:text-[15px] text-primary`}
         >
           <span role="columnheader">Patients ID</span>
           <span role="columnheader" className="text-center">Status</span>
@@ -46,7 +46,7 @@ const PatientList = () => {
               <button
                 type="button"
                 onClick={reload}
-                className="cursor-pointer rounded-md border-[1.5px] border-[#1F3A5F] bg-[#1F3A5F] px-4 py-2 text-[13px] sm:text-[14px] text-white"
+                className="cursor-pointer rounded-md border-[1.5px] border-[#1D4ED8] bg-[#1D4ED8] px-4 py-2 text-[13px] sm:text-[14px] text-white"
               >
                 Try Again
               </button>
@@ -65,7 +65,7 @@ const PatientList = () => {
                 <div role="cell" className="min-w-0 sm:col-start-1">
                   <Link
                     to={`/patient/${patient.id}`}
-                    className="text-[13px] sm:text-[14px] font-medium text-primary after:absolute after:inset-0 after:content-['']"
+                    className="text-[12px] sm:text-[13px] text-primary after:absolute after:inset-0 after:content-['']"
                   >
                     {patient.display}
                   </Link>
@@ -76,9 +76,9 @@ const PatientList = () => {
                   aria-hidden="true"
                   className="col-start-2 row-start-1 flex items-center gap-[3px] justify-self-end sm:col-start-4"
                 >
-                  <span className="size-[5px] rounded-full bg-[#1D4ED8]" />
-                  <span className="size-[5px] rounded-full bg-[#1D4ED8]" />
-                  <span className="size-[5px] rounded-full bg-[#1D4ED8]" />
+                  <span className="size-[2px] rounded-full bg-gray-400" />
+                  <span className="size-[2px] rounded-full bg-gray-400" />
+                  <span className="size-[2px] rounded-full bg-gray-400" />
                 </div>
 
                 <div

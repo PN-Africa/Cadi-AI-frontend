@@ -22,9 +22,9 @@ const bannerTone: Record<PatientStatus, string> = {
 
 const cardClass = "rounded-xl border border-[#C6C6CD99] bg-white p-5";
 const primaryLink =
-  "block w-full rounded-lg bg-[#2563EB] py-2.5 text-center text-[13px] sm:text-[14px] font-medium text-white";
+  "block w-full rounded-lg bg-[#2563EB] py-2.5 text-center text-[13px] sm:text-[14px] text-white";
 const outlineLink =
-  "block w-full rounded-lg border border-[#2563EB] bg-white py-2.5 text-center text-[13px] sm:text-[14px] font-medium text-[#2563EB]";
+  "block w-full rounded-lg border border-[#2563EB] bg-white py-2.5 text-center text-[13px] sm:text-[14px] text-[#2563EB]";
 
 const SummaryCards = ({ event, patient, canResolve, resolveTo, monitoringTo }: SummaryCardsProps) => {
   const [note, setNote] = useState("");
@@ -44,7 +44,6 @@ const SummaryCards = ({ event, patient, canResolve, resolveTo, monitoringTo }: S
   ];
 
   const saveNote = () => {
-    // TODO: send the note to the backend once an endpoint exists.
     toast.success("Note saved");
     setNote("");
   };
@@ -52,7 +51,7 @@ const SummaryCards = ({ event, patient, canResolve, resolveTo, monitoringTo }: S
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.6fr_1fr]">
       <section className={cardClass}>
-        <h2 className="font-bold text-[16px] sm:text-[18px] text-primary">Event overview</h2>
+        <h2 className="text-[16px] sm:text-[22px] text-primary">Event overview</h2>
 
         <div className={`mt-4 flex items-start gap-3 rounded-lg p-4 ${bannerTone[event.level]}`}>
           <StatusRing level={event.level} thick className="mt-0.5" />
@@ -72,7 +71,7 @@ const SummaryCards = ({ event, patient, canResolve, resolveTo, monitoringTo }: S
           {rows.map((row) => (
             <div key={row.label} className="flex items-center justify-between gap-4 py-3">
               <dt className="text-[12px] sm:text-[13px] text-[#6B7C93]">{row.label}</dt>
-              <dd className="text-right text-[12px] sm:text-[13px] font-semibold text-primary">
+              <dd className="text-right text-[12px] sm:text-[13px] text-primary">
                 {row.value}
               </dd>
             </div>
@@ -88,7 +87,7 @@ const SummaryCards = ({ event, patient, canResolve, resolveTo, monitoringTo }: S
 
       <div className="flex flex-col gap-4">
         <section className={cardClass}>
-          <h2 className="font-bold text-[16px] sm:text-[18px] text-primary">Follow-up</h2>
+          <h2 className="text-[16px] sm:text-[18px] text-primary">Follow-up</h2>
           <p className="mt-2 text-[12px] sm:text-[13px] text-[#6B7C93]">
             Check in with {firstName} or review monitoring to decide what to do next.
           </p>
@@ -96,7 +95,7 @@ const SummaryCards = ({ event, patient, canResolve, resolveTo, monitoringTo }: S
           <div className="mt-4 flex flex-col gap-2">
             {canResolve && (
               <Link to={resolveTo} className={primaryLink}>
-                Details
+                 Resolve Status
               </Link>
             )}
             <Link to={monitoringTo} className={outlineLink}>
@@ -108,7 +107,7 @@ const SummaryCards = ({ event, patient, canResolve, resolveTo, monitoringTo }: S
         {canResolve && (
           <section className={cardClass}>
             <div className="flex items-center justify-between gap-3">
-              <h2 className="font-bold text-[14px] sm:text-[15px] text-primary">Add a note</h2>
+              <h2 className="text-[14px] sm:text-[18px] text-primary">Add a note</h2>
               <span className="text-[11px] sm:text-[12px] text-[#6B7C93]">Optional</span>
             </div>
             <p className="mt-2 text-[12px] sm:text-[13px] text-[#6B7C93]">
@@ -126,7 +125,7 @@ const SummaryCards = ({ event, patient, canResolve, resolveTo, monitoringTo }: S
               type="button"
               onClick={saveNote}
               disabled={!note.trim()}
-              className="mt-3 w-full cursor-pointer rounded-lg bg-[#2563EB] py-2.5 text-[13px] sm:text-[14px] font-medium text-white disabled:cursor-not-allowed disabled:bg-[#F1F5F9] disabled:text-[#9CA3AF]"
+              className="mt-3 w-full cursor-pointer rounded-lg bg-[#2563EB] py-2.5 text-[13px] sm:text-[14px] text-white disabled:cursor-not-allowed disabled:bg-[#F1F5F9] disabled:text-[#9CA3AF]"
             >
               Save note
             </button>

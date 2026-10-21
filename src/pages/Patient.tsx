@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { Link, NavLink, Outlet, useNavigate, useParams } from "react-router-dom";
-import { LucideArrowLeft } from "lucide-react";
 import StatusBadge from "../components/StatusBadge";
 import Loading from "../components/Loading";
 import { usePatient } from "../data/usePatients";
@@ -42,7 +41,7 @@ const MessageCard = ({
 );
 
 const primaryButton =
-  "mt-1 cursor-pointer rounded-md border-[1.5px] border-[#1F3A5F] bg-[#1F3A5F] px-4 py-2 text-[13px] sm:text-[14px] text-white";
+  "mt-1 cursor-pointer rounded-lg border-[1.5px] border-[#1F3A5F] bg-[#1D4ED8] px-4 py-2 text-[13px] sm:text-[14px] text-white";
 
 const Patient = () => {
   const { id } = useParams<{ id: string }>();
@@ -86,26 +85,18 @@ const Patient = () => {
   return (
     <div className="p-4 sm:p-6 lg:p-8 flex flex-col gap-6">
       <header className="flex flex-col gap-3">
-        <button
-          type="button"
-          onClick={() => navigate("/patients")}
-          aria-label="Back to patients"
-          className="-ml-1 self-start rounded-md p-1 cursor-pointer hover:bg-white"
-        >
-          <LucideArrowLeft className="size-5 text-primary" />
-        </button>
 
         <div className="flex items-start justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">
             <div
               aria-hidden="true"
-              className="flex size-11 sm:size-12 shrink-0 items-center justify-center rounded-full bg-[#1F3A5F] text-[14px] sm:text-[15px] font-medium text-white"
+              className="flex size-11 sm:size-20 shrink-0 items-center justify-center rounded-full bg-[#1F3A5F] text-[14px] sm:text-[18px] text-white"
             >
               {getInitials(patient.name)}
             </div>
 
             <div className="min-w-0">
-              <h1 className="truncate font-bold text-[18px] sm:text-[20px] lg:text-[22px] text-primary">
+              <h1 className="truncate font-semibold text-[18px] sm:text-[24px] lg:text-[28px] text-primary">
                 {patient.name}
               </h1>
               <p className="text-[12px] sm:text-[13px] text-[#6B7C93]">{details}</p>

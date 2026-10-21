@@ -14,7 +14,7 @@ interface StatusBadgeProps {
 
 const StatusBadge = ({ status, withRing = false, className = "" }: StatusBadgeProps) => (
   <span
-    className={`inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-1 text-[12px] sm:text-[13px] font-medium whitespace-nowrap ${badgeStyles[status]} ${className}`}
+    className={`inline-flex items-center justify-center gap-1.5 rounded-md px-3 py-1 text-[12px] sm:text-[13px] whitespace-nowrap ${badgeStyles[status]} ${className}`}
   >
     {withRing && (
       <span aria-hidden="true" className="size-3 rounded-full border-2 border-current" />

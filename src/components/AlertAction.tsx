@@ -17,9 +17,9 @@ interface AlertActionProps {
 }
 
 const bannerTone: Record<PatientStatus, string> = {
-  normal: "bg-[#F0FDF4]",
-  "needs attention": "bg-[#FEF9DD]",
-  emergency: "bg-[#FEF2F2]",
+  normal: "bg-[#BBF7D0]",
+  "needs attention": "bg-[#FEF9C3]",
+  emergency: "bg-[#FEE2E2]",
 };
 
 const readDraft = (key: string): ResolutionValues => {
@@ -70,12 +70,12 @@ const AlertAction = ({ event, patient, recordedPhrase, draftKey, onResolve }: Al
 
   return (
     <section className="rounded-xl border border-[#C6C6CD99] bg-white p-5 sm:p-6">
-      <h2 className="font-bold text-[16px] sm:text-[18px] text-primary">Resolution details</h2>
+      <h2 className="text-[16px] sm:text-[22px] text-primary">Resolution details</h2>
 
       <div className={`mt-4 flex items-start gap-3 rounded-lg p-4 ${bannerTone[event.level]}`}>
         <StatusRing level={event.level} thick className="mt-0.5" />
         <div>
-          <p className="text-[13px] sm:text-[14px] font-semibold text-primary">{event.label}</p>
+          <p className="text-[13px] sm:text-[14px] text-primary">{event.label}</p>
           <p className="mt-1 text-[12px] sm:text-[13px] text-[#6B7C93]">
             Recorded {recordedPhrase} for {patient.name} (ID {patient.patientCode}
             {patient.age !== null ? `, Age ${patient.age}` : ""}).

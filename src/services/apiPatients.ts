@@ -1,4 +1,5 @@
 import { axiosPrivate } from "../lib/axios";
+import { dedupeRequest } from "../lib/dedupeRequest";
 import type {
   ActivityEvent,
   MonitoringPoint,
@@ -17,6 +18,7 @@ export interface PatientListItemResponse {
   lastActivity: string;
 }
 
+// GET /patients/{id}
 export interface PatientDetailResponse {
   id: string;
   name: string;
@@ -24,7 +26,6 @@ export interface PatientDetailResponse {
   age: number;
   status: string;
   lastUpdated: string;
-  lastActivity: string;
   heartRate: number;
   bloodOxygen: number;
   temperature: number;
@@ -145,7 +146,7 @@ const toPatient = (raw: PatientDetailResponse): Patient => {
     patientCode: raw.patientIdCode,
     name: raw.name,
     age: raw.age ?? null,
-    lastActivity: raw.lastActivity,
+    lastActivity: raw.minsSinceEvents?.inactivityDetectedMins === 0 ? "Just now" : `${raw.minsSinceEvents?.inactivityDetectedMins ?? "—"} min ago`,
     status: normalizeStatus(raw.status),
     lastUpdated: raw.lastUpdated,
     stats,
@@ -179,32 +180,36 @@ const toActivityEvent = (raw: PatientActivityResponse, index: number): ActivityE
   };
 };
 
-export const getPatients = async (): Promise<PatientSummary[]> => {
-  const res = await axiosPrivate.get<PatientListItemResponse[]>(`/patients`);
-  return (Array.isArray(res.data) ? res.data : []).map(toPatientSummary);
-};
+export const getPatients = (): Promise<PatientSummary[]> =>
+  dedupeRequest("patients", async () => {
+    const res = await axiosPrivate.get<PatientListItemResponse[]>(`/patients`);
+    return (Array.isArray(res.data) ? res.data : []).map(toPatientSummary);
+  });
 
-export const getPatient = async (id: string): Promise<Patient> => {
-  const res = await axiosPrivate.get<PatientDetailResponse>(
-    `/patients/${encodeURIComponent(id)}`
-  );
-  return toPatient(res.data);
-};
+export const getPatient = (id: string): Promise<Patient> =>
+  dedupeRequest(`patient:${id}`, async () => {
+    const res = await axiosPrivate.get<PatientDetailResponse>(
+      `/patients/${encodeURIComponent(id)}`
+    );
+    return toPatient(res.data);
+  });
 
-export const getPatientMonitoring = async (id: string): Promise<PatientMonitoring> => {
-  const res = await axiosPrivate.get<PatientMonitoringResponse>(
-    `/patients/${encodeURIComponent(id)}/monitoring`
-  );
-  return toMonitoring(res.data);
-};
+export const getPatientMonitoring = (id: string): Promise<PatientMonitoring> =>
+  dedupeRequest(`monitoring:${id}`, async () => {
+    const res = await axiosPrivate.get<PatientMonitoringResponse>(
+      `/patients/${encodeURIComponent(id)}/monitoring`
+    );
+    return toMonitoring(res.data);
+  });
 
-export const getPatientActivity = async (id: string): Promise<ActivityEvent[]> => {
-  const res = await axiosPrivate.get<PatientActivityResponse[]>(
-    `/patients/${encodeURIComponent(id)}/activity`
-  );
+export const getPatientActivity = (id: string): Promise<ActivityEvent[]> =>
+  dedupeRequest(`activity:${id}`, async () => {
+    const res = await axiosPrivate.get<PatientActivityResponse[]>(
+      `/patients/${encodeURIComponent(id)}/activity`
+    );
 
-  // Newest first
-  return (Array.isArray(res.data) ? res.data : [])
-    .map(toActivityEvent)
-    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-};
+    // newest first
+    return (Array.isArray(res.data) ? res.data : [])
+      .map(toActivityEvent)
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  });

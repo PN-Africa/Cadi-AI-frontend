@@ -6,7 +6,7 @@ interface SearchBarProps {
   onSearch?: (query: string) => void;
 }
 
-const SearchBar = ({ placeholder = "Search", onSearch }: SearchBarProps) => {
+const SearchBar = ({ placeholder = "Search Patients", onSearch }: SearchBarProps) => {
   const [query, setQuery] = useState("");
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
