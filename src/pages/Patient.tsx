@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Link, NavLink, Outlet, useNavigate, useParams } from "react-router-dom";
+import { Link, NavLink, Outlet, useParams } from "react-router-dom";
 import StatusBadge from "../components/StatusBadge";
 import Loading from "../components/Loading";
 import { usePatient } from "../data/usePatients";
@@ -45,7 +45,7 @@ const primaryButton =
 
 const Patient = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { patient, isLoading, isNotFound, hasError, reload } = usePatient(id);
 
   if (isLoading) {
