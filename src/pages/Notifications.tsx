@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LucideClipboardList, LucideInfo } from "lucide-react";
+import { LucideInfo } from "lucide-react";
 import Pagination from "../components/Pagination";
 import { useAuthStore } from "../auth/auth";
 
@@ -119,8 +119,8 @@ const Notifications = () => {
   const pageStart = (currentPage - 1) * PAGE_SIZE;
   const visible = ordered.slice(pageStart, pageStart + PAGE_SIZE);
 
-  const firstAlert = alerts.find((alert) => !alert.read && alert.type === "urgent")
-    ?? alerts.find((alert) => !alert.read);
+  // const firstAlert = alerts.find((alert) => !alert.read && alert.type === "urgent")
+  //   ?? alerts.find((alert) => !alert.read);
 
   const openAlert = (alert: NotificationAlert) => {
     setReadIds((ids) => (ids.includes(alert.id) ? ids : [...ids, alert.id]));
