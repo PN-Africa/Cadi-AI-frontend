@@ -13,9 +13,9 @@ const getInitials = (name: string) =>
     .join("");
 
 const tabClass = ({ isActive }: { isActive: boolean }) =>
-  `justify-self-center rounded-md border-b-2 px-4 py-1.5 text-[13px] sm:text-[14px] font-medium ${
+  `flex w-full items-center justify-center border-b px-4 py-1.5 text-center text-[13px] sm:text-[15px] ${
     isActive
-      ? "border-[#1D4ED8] bg-[#BFDBFE] text-[#1D4ED8]"
+      ? "border-[#1D4ED8] bg-[#DBEAFE] text-[#1D4ED8]"
       : "border-transparent text-primary hover:bg-white"
   }`;
 
@@ -41,7 +41,7 @@ const MessageCard = ({
 );
 
 const primaryButton =
-  "mt-1 cursor-pointer rounded-lg border-[1.5px] border-[#1F3A5F] bg-[#1D4ED8] px-4 py-2 text-[13px] sm:text-[14px] text-white";
+  "mt-1 cursor-pointer rounded-lg border-[1.5px] border-[#1D4ED8] bg-[#1D4ED8] px-4 py-2 text-[13px] sm:text-[14px] text-white";
 
 const Patient = () => {
   const { id } = useParams<{ id: string }>();

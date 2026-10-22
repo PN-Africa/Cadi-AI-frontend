@@ -140,7 +140,7 @@ const Notifications = () => {
         </div>
 
         {roleLabel && userName && (
-          <p className="flex items-center gap-1.5 text-[11px] sm:text-[12px] text-[#6B7C93]">
+          <p className="md:pt-3 flex items-center gap-1.5 text-[11px] sm:text-[12px] text-[#6B7C93]">
             <span aria-hidden="true" className="size-1.5 rounded-full bg-[#2563EB]" />
             {roleLabel}: {userName}
           </p>

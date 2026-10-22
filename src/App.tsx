@@ -225,10 +225,13 @@ const router = createBrowserRouter([
                     } satisfies RouteHandle,
                   },
                   {
-                    path: "activity/:eventId/history",
+                    path: "history",
                     element: <PatientHistory />,
                     handle: {
-                      crumbs: (p) => [patientsCrumb, { label: "History", to: `/patient/${p.id}/history` }],
+                      crumbs: (p) => [
+                        patientsCrumb,
+                        { label: "History", to: `/patient/${p.id}/history` },
+                      ],
                     } satisfies RouteHandle,
                   },
                 ],

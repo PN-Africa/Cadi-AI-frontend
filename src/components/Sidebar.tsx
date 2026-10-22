@@ -33,11 +33,9 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     if (currentPatientId) setLastPatientId(currentPatientId);
   }, [currentPatientId]);
   const activePatientId = currentPatientId ?? lastPatientId;
-  const historyPath = activePatientId ? `/patient/${activePatientId}/history` : "/patients";
-  const onHistoryPages =
-    !!currentPatientId &&
-    (pathname === `/patient/${currentPatientId}/history` ||
-      pathname.startsWith(`/patient/${currentPatientId}/activity`));
+  const historyPath = `/patient/${activePatientId}/history`;
+  const onHistoryPage =
+    !!currentPatientId && pathname === `/patient/${currentPatientId}/history`;
 
   const navItems: {
     label: string;
@@ -52,7 +50,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       to: "/patients",
       icon: patientsicon,
       activeIcon: patientsiconActive,
-      active: pathname === "/patients" || (!!currentPatientId && !onHistoryPages),
+      active: pathname === "/patients" || (!!currentPatientId && !onHistoryPage),
     },
     { label: "History", to: historyPath, icon: foldericon, activeIcon: foldericonActive },
     { label: "Overview", to: '/overview', icon: overviewicon, activeIcon: overviewiconActive },
@@ -77,12 +75,12 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       )}
 
       <aside
-        className={`fixed top-0 left-0 h-full w-64 z-40 bg-white border-r border-[#C6C6CD99] flex flex-col p-4 transition-transform motion-reduce:transition-none lg:sticky lg:h-screen lg:w-60 lg:z-auto lg:translate-x-0 shrink-0 ${
+        className={`fixed top-0 left-0 h-full w-64 z-40 bg-white border-r border-[#C6C6CD99] flex flex-col transition-transform motion-reduce:transition-none lg:sticky lg:h-screen lg:w-60 lg:z-auto lg:translate-x-0 shrink-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         aria-label="Main navigation"
       >
-        <div className="flex items-center justify-between px-2 py-2">
+        <div className="flex items-center justify-between p-2">
           <button
             type="button"
             onClick={onClose}
@@ -100,9 +98,9 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
               to={to}
               onClick={onClose}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2 rounded-md text-[14px] ${
+                `flex items-center gap-3 px-6 py-2.5 text-[14px] ${
                   (active ?? isActive)
-                    ? "text-[#2563EB] font-medium"
+                    ? "text-[#2563EB] font-medium bg-gray-100"
                     : "text-[#6B7C93] hover:bg-[#F8F9FF]"
                 }`
               }

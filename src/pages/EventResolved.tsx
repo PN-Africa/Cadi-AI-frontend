@@ -133,7 +133,7 @@ const EventResolved = () => {
           <div className="mt-5 flex items-center gap-4 rounded-xl bg-[#ECFDF3] p-4">
             <LucideCheck className="size-8 shrink-0 text-[#22C55E]" strokeWidth={1.5} aria-hidden="true" />
             <div>
-              <p className="text-[13px] sm:text-[16px] text-primary">
+              <p className="text-[13px] sm:text-[14px] text-primary">
                 Current alert closed
               </p>
               <p className="text-[12px] sm:text-[13px] text-[#6B7C93]">
