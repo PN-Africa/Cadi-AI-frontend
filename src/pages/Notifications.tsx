@@ -1,46 +1,14 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import { LucideInfo } from "lucide-react";
+import Loading from "../components/Loading";
 import Pagination from "../components/Pagination";
 import { useAuthStore } from "../auth/auth";
+import { useNotifications } from "../data/useNotifications";
+import type { AlertType, NotificationAlert } from "../data/patientTypes";
 
-type AlertType = "urgent" | "follow-up" | "update";
 type Filter = "all" | "unread" | "urgent" | "follow-up" | "read";
-
-interface NotificationAlert {
-  id: string;
-  patientId: string;
-  type: AlertType;
-  read: boolean;
-}
-
-const mockPatients: Record<string, { name: string; code: string }> = {
-  "mock-james-okarfor": { name: "James Okarfor", code: "N2S458J" },
-  "mock-john-wick": { name: "John Wick", code: "H3I847L" },
-  "mock-white-esther": { name: "White Esther", code: "W4H562K" },
-};
-
-const james = "mock-james-okarfor";
-const john = "mock-john-wick";
-const esther = "mock-white-esther";
-
-// Newest first. 14 alerts: 6 unread, 3 urgent, 5 follow-up, 6 updates.
-const mockAlerts: NotificationAlert[] = [
-  { id: "n1", patientId: james, type: "urgent", read: false },
-  { id: "n2", patientId: john, type: "urgent", read: false },
-  { id: "n3", patientId: esther, type: "follow-up", read: true },
-  { id: "n4", patientId: james, type: "urgent", read: false },
-  { id: "n5", patientId: john, type: "follow-up", read: false },
-  { id: "n6", patientId: esther, type: "follow-up", read: false },
-  { id: "n7", patientId: james, type: "update", read: false },
-  { id: "n8", patientId: john, type: "follow-up", read: true },
-  { id: "n9", patientId: esther, type: "follow-up", read: true },
-  { id: "n10", patientId: james, type: "update", read: true },
-  { id: "n11", patientId: john, type: "update", read: true },
-  { id: "n12", patientId: esther, type: "update", read: true },
-  { id: "n13", patientId: james, type: "update", read: true },
-  { id: "n14", patientId: john, type: "update", read: true },
-];
 
 const PAGE_SIZE = 3;
 
@@ -84,17 +52,28 @@ const Notifications = () => {
   const [page, setPage] = useState(1);
   const [readIds, setReadIds] = useState<string[]>([]);
 
-  const alerts = mockAlerts.map((alert) => ({
-    ...alert,
-    read: alert.read || readIds.includes(alert.id),
-  }));
+  const { alerts: fetchedAlerts, summary, isLoading, hasError, reload } = useNotifications();
 
+  const alerts = useMemo(
+    () =>
+      fetchedAlerts.map((alert) => ({
+        ...alert,
+        read: alert.read || readIds.includes(alert.id),
+      })),
+    [fetchedAlerts, readIds]
+  );
+
+  // Totals come from the API summary; alerts opened in this session shift unread -> read.
+  const newlyRead = fetchedAlerts.filter((alert) => !alert.read && readIds.includes(alert.id)).length;
   const counts = {
-    all: alerts.length,
-    unread: alerts.filter((alert) => !alert.read).length,
-    urgent: alerts.filter((alert) => alert.type === "urgent").length,
-    "follow-up": alerts.filter((alert) => alert.type === "follow-up").length,
-    read: alerts.filter((alert) => alert.read).length,
+    all: summary?.all ?? alerts.length,
+    unread: Math.max(
+      0,
+      (summary?.unread ?? fetchedAlerts.filter((alert) => !alert.read).length) - newlyRead
+    ),
+    urgent: summary?.urgent ?? alerts.filter((alert) => alert.type === "urgent").length,
+    "follow-up": summary?.followUp ?? alerts.filter((alert) => alert.type === "follow-up").length,
+    read: (summary?.read ?? fetchedAlerts.filter((alert) => alert.read).length) + newlyRead,
   };
 
   const tabs: { key: Filter; label: string }[] = [
@@ -124,7 +103,17 @@ const Notifications = () => {
 
   const openAlert = (alert: NotificationAlert) => {
     setReadIds((ids) => (ids.includes(alert.id) ? ids : [...ids, alert.id]));
-    navigate(`/patient/${alert.patientId}`);
+
+    if (!alert.patientId) {
+      toast.error("We couldn't find this patient in your list.");
+      return;
+    }
+
+    navigate(
+      alert.eventId
+        ? `/patient/${alert.patientId}/activity/${encodeURIComponent(alert.eventId)}`
+        : `/patient/${alert.patientId}`
+    );
   };
 
   return (
@@ -215,15 +204,32 @@ const Notifications = () => {
           </div>
 
           <div role="rowgroup" className="divide-y divide-[#C6C6CD99] border-t border-[#C6C6CD99]">
-            {visible.length === 0 ? (
+            {isLoading ? (
+              <Loading variant="table" rows={PAGE_SIZE} label="Loading notifications" />
+            ) : hasError ? (
+              <div role="alert" className="flex flex-col items-center gap-3 px-6 py-10 text-center">
+                <p className="font-semibold text-[15px] sm:text-[16px] text-primary">
+                  We couldn't load your notifications
+                </p>
+                <p className="max-w-md text-[13px] sm:text-[14px] text-[#6B7C93]">
+                  Check your connection, then try again.
+                </p>
+                <button
+                  type="button"
+                  onClick={reload}
+                  className="cursor-pointer rounded-md border-[1.5px] border-[#1D4ED8] bg-[#1D4ED8] px-4 py-2 text-[13px] sm:text-[14px] text-white"
+                >
+                  Try Again
+                </button>
+              </div>
+            ) : visible.length === 0 ? (
               <p className="px-5 py-10 text-center text-[13px] sm:text-[14px] text-[#6B7C93]">
                 No alerts match this filter.
               </p>
             ) : (
               visible.map((alert) => {
-                const patient = mockPatients[alert.patientId];
                 const style = typeStyles[alert.type];
-                const initials = patient.name
+                const initials = alert.patientName
                   .split(" ")
                   .slice(0, 2)
                   .map((word) => word[0])
@@ -244,9 +250,9 @@ const Notifications = () => {
                       </span>
                       <div className="min-w-0">
                         <p className="truncate text-[13px] sm:text-[14px] font-semibold text-primary">
-                          {patient.name}
+                          {alert.patientName}
                         </p>
-                        <p className="text-[11px] sm:text-[12px] text-[#6B7C93]">{patient.code}</p>
+                        <p className="text-[11px] sm:text-[12px] text-[#6B7C93]">{alert.patientCode}</p>
                       </div>
                     </div>
 

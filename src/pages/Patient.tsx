@@ -46,7 +46,7 @@ const primaryButton =
 const Patient = () => {
   const { id } = useParams<{ id: string }>();
   // const navigate = useNavigate();
-  const { patient, isLoading, isNotFound, hasError, reload } = usePatient(id);
+  const { patient, isLoading, isNotFound, hasError, reload, refresh } = usePatient(id);
 
   if (isLoading) {
     return <Loading variant="spinner" label="Loading patient" />;
@@ -116,7 +116,7 @@ const Patient = () => {
         </NavLink>
       </nav>
 
-      <Outlet context={{ patient }} />
+      <Outlet context={{ patient, refreshPatient: refresh }} />
     </div>
   );
 };

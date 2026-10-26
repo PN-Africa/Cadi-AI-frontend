@@ -1,74 +1,30 @@
 import { useMemo, useState } from "react";
 import { Link, useOutletContext } from "react-router-dom";
 import { LucideArrowUpDown, LucideChevronDown } from "lucide-react";
-import type { Patient } from "../data/patientTypes";
+import Loading from "../components/Loading";
+import { usePatientHistory } from "../data/usePatients";
+import type { HistoryStatus, Patient } from "../data/patientTypes";
 
-type HistoryDay = "today" | "yesterday";
-type HistoryStatus = "resolved" | "open";
 type RangeFilter = "today" | "yesterday" | "week";
 type StatusFilter = "all" | HistoryStatus;
 
-interface HistoryRecord {
-  id: string;
-  eventId: string;
-  day: HistoryDay;
-  order: number;
-  time: string;
-  title: string;
-  category: string;
-  status: HistoryStatus;
-  fields: { label: string; value: string }[];
-}
+const startOfDay = (date: Date) =>
+  new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
-// Mock history, used until the history endpoint exists. eventId points at the
-// mock events in usePatients.ts so "View event details" opens a real page.
-const mockHistory: HistoryRecord[] = [
-  {
-    id: "h1", eventId: "mock-inactivity", day: "today", order: 609, time: "10:09 AM",
-    title: "Inactivity Detected", category: "Activity alert", status: "resolved",
-    fields: [
-      { label: "Inactivity duration", value: "15 minutes" },
-      { label: "Resolution reason", value: "Patient checked and active" },
-      { label: "Resolution notes", value: "Patient was sleeping, so was on his side for long" },
-    ],
-  },
-  {
-    id: "h2", eventId: "mock-fall-risk", day: "today", order: 582, time: "09:42 AM",
-    title: "Fall Risk Alert", category: "Safety alert", status: "open",
-    fields: [
-      { label: "Alert source", value: "Bed sensor" },
-      { label: "Last checked", value: "09:45 AM" },
-      { label: "Notes", value: "Caregiver requested follow-up after the patient stood up quickly." },
-    ],
-  },
-  {
-    id: "h3", eventId: "mock-movement-4", day: "today", order: 500, time: "08:20 AM",
-    title: "Movement Detected", category: "Activity alert", status: "resolved",
-    fields: [
-      { label: "Source", value: "Wearable sensor" },
-      { label: "Resolution reason", value: "Routine activity confirmed" },
-      { label: "Resolution notes", value: "No further action noted." },
-    ],
-  },
-  {
-    id: "h4", eventId: "mock-yesterday-1", day: "yesterday", order: -373, time: "05:47 PM",
-    title: "Sudden Movement", category: "Activity alert", status: "resolved",
-    fields: [
-      { label: "Source", value: "Wearable sensor" },
-      { label: "Resolution reason", value: "Patient checked and active" },
-      { label: "Resolution notes", value: "No further action noted." },
-    ],
-  },
-  {
-    id: "h5", eventId: "mock-yesterday-2", day: "yesterday", order: -570, time: "02:30 PM",
-    title: "Movement Detected", category: "Activity alert", status: "resolved",
-    fields: [
-      { label: "Source", value: "Wearable sensor" },
-      { label: "Resolution reason", value: "Routine activity confirmed" },
-      { label: "Resolution notes", value: "No further action noted." },
-    ],
-  },
-];
+const isInRange = (timestamp: number | null, range: RangeFilter, now: Date) => {
+  if (timestamp === null) return range === "week";
+
+  const todayStart = startOfDay(now);
+  const yesterdayStart = new Date(todayStart);
+  yesterdayStart.setDate(todayStart.getDate() - 1);
+  const weekStart = new Date(todayStart);
+  weekStart.setDate(todayStart.getDate() - 6);
+
+  if (range === "today") return timestamp >= todayStart.getTime();
+  if (range === "yesterday")
+    return timestamp >= yesterdayStart.getTime() && timestamp < todayStart.getTime();
+  return timestamp >= weekStart.getTime();
+};
 
 const statusPill: Record<HistoryStatus, { label: string; pill: string; dot: string }> = {
   resolved: { label: "Resolved", pill: "bg-[#ECFDF3] text-[#15803D]", dot: "bg-[#22C55E]" },
@@ -84,14 +40,19 @@ const PatientHistory = () => {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [newestFirst, setNewestFirst] = useState(true);
 
-  const records = useMemo(
-    () =>
-      mockHistory
-        .filter((record) => range === "week" || record.day === range)
-        .filter((record) => statusFilter === "all" || record.status === statusFilter)
-        .sort((a, b) => (newestFirst ? b.order - a.order : a.order - b.order)),
-    [range, statusFilter, newestFirst]
-  );
+  const { records: allRecords, isLoading, hasError, reload } = usePatientHistory(patient.id);
+
+  const records = useMemo(() => {
+    const now = new Date();
+    return allRecords
+      .filter((record) => isInRange(record.timestamp, range, now))
+      .filter((record) => statusFilter === "all" || record.status === statusFilter)
+      .sort((a, b) =>
+        newestFirst
+          ? (b.timestamp ?? 0) - (a.timestamp ?? 0)
+          : (a.timestamp ?? 0) - (b.timestamp ?? 0)
+      );
+  }, [allRecords, range, statusFilter, newestFirst]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -158,7 +119,25 @@ const PatientHistory = () => {
           </p>
         </div>
 
-        {records.length === 0 ? (
+        {isLoading ? (
+          <Loading variant="table" rows={4} label="Loading history" />
+        ) : hasError ? (
+          <div role="alert" className="flex flex-col items-center gap-3 py-10 text-center">
+            <p className="font-semibold text-[15px] sm:text-[16px] text-primary">
+              We couldn't load this history
+            </p>
+            <p className="max-w-md text-[13px] sm:text-[14px] text-[#6B7C93]">
+              Check your connection, then try again.
+            </p>
+            <button
+              type="button"
+              onClick={reload}
+              className="cursor-pointer rounded-md border-[1.5px] border-[#1D4ED8] bg-[#1D4ED8] px-4 py-2 text-[13px] sm:text-[14px] text-white"
+            >
+              Try Again
+            </button>
+          </div>
+        ) : records.length === 0 ? (
           <p className="py-10 text-center text-[13px] sm:text-[14px] text-[#6B7C93]">
             No history records match these filters.
           </p>

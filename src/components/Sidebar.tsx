@@ -14,6 +14,7 @@ import overviewiconActive from "../assets/menu-board-active.svg"
 import notificationsicon from "../assets/notification-sidebar.svg"
 import notificationsiconActive from "../assets/notification-active.svg"
 import settingsicon from "../assets/setting-3.svg"
+import settingsIconActive from "../assets/setting-active.svg"
 
 
 interface SidebarProps {
@@ -53,9 +54,9 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       active: pathname === "/patients" || (!!currentPatientId && !onHistoryPage),
     },
     { label: "History", to: historyPath, icon: foldericon, activeIcon: foldericonActive },
-    { label: "Overview", to: '/overview', icon: overviewicon, activeIcon: overviewiconActive },
+    { label: "Drafts", to: '/drafts', icon: overviewicon, activeIcon: overviewiconActive },
     { label: "Notifications", to: '/notifications', icon: notificationsicon, activeIcon: notificationsiconActive },
-    { label: "Settings", to: '/settings', icon: settingsicon, activeIcon: settingsicon },
+    { label: "Settings", to: '/settings', icon: settingsicon, activeIcon: settingsIconActive },
   ];
 
   const handleLogout = () => {

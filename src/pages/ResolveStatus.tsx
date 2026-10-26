@@ -8,6 +8,7 @@ import StatusRing from "../components/StatusRing";
 import { useAuthStore } from "../auth/auth";
 import { formatEventDay, formatEventPhrase, formatEventTime } from "../data/formatTime";
 import { usePatientEvent } from "../data/usePatients";
+import { addEventNote, getErrorMessage, resolveEvent, toApiStatus } from "../services/apiPatients";
 import type { Patient } from "../data/patientTypes";
 
 const StateCard = ({
@@ -34,10 +35,14 @@ const buttonClass =
 const cardClass = "rounded-xl border border-[#C6C6CD99] bg-white p-5";
 
 const ResolveStatus = () => {
-  const { patient } = useOutletContext<{ patient: Patient }>();
+  const { patient, refreshPatient } = useOutletContext<{
+    patient: Patient;
+    refreshPatient?: () => void;
+  }>();
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
   const [note, setNote] = useState("");
+  const [isSavingNote, setIsSavingNote] = useState(false);
 
   const role = useAuthStore((state) => state.user?.role);
   const isHealthcareProfessional =
@@ -96,20 +101,42 @@ const ResolveStatus = () => {
   }
 
   const handleResolve = async ({ reason, notes }: ResolutionValues) => {
-    // TODO: replace this simulated request with the resolve-event endpoint.
-    await new Promise((resolve) => setTimeout(resolve, 600));
+    try {
+      await resolveEvent(patient.id, event.id, {
+        resolutionReason: reason,
+        resolutionNotes: notes,
+        // keeps the patient's current status; the resolve itself doesn't assert a medical outcome
+        updatedPatientStatus: toApiStatus(patient.status),
+        isDraft: false,
+      });
+    } catch (error) {
+      toast.error(getErrorMessage(error, "We couldn't resolve this event. Please try again."));
+      throw error;
+    }
 
+    // the event endpoint doesn't return reason/notes, so keep them for the confirmation page
     sessionStorage.setItem(
       `resolution:${patient.id}:${event.id}`,
       JSON.stringify({ reason, notes })
     );
+    refreshPatient?.();
     navigate(`${eventPath}/resolved`);
   };
 
-  const saveNote = () => {
-    // TODO: send the note to the backend once an endpoint exists.
-    toast.success("Note saved");
-    setNote("");
+  const saveNote = async () => {
+    const trimmed = note.trim();
+    if (!trimmed || isSavingNote) return;
+
+    setIsSavingNote(true);
+    try {
+      await addEventNote(patient.id, event.id, trimmed);
+      toast.success("Note saved");
+      setNote("");
+    } catch (error) {
+      toast.error(getErrorMessage(error, "We couldn't save your note. Please try again."));
+    } finally {
+      setIsSavingNote(false);
+    }
   };
 
   const durationRow = event.type === "INACTIVITY_DETECTION";
@@ -161,7 +188,7 @@ const ResolveStatus = () => {
                 <div className="flex items-center justify-between gap-4 py-2.5">
                   <dt className="text-[12px] sm:text-[13px] text-[#6B7C93]">Inactivity duration</dt>
                   <dd className="text-[12px] sm:text-[13px] text-primary">
-                    Not provided
+                    {event.inactivityDuration || "Not provided"}
                   </dd>
                 </div>
               )}
@@ -199,7 +226,7 @@ const ResolveStatus = () => {
               <button
                 type="button"
                 onClick={saveNote}
-                disabled={!note.trim()}
+                disabled={!note.trim() || isSavingNote}
                 className="mt-3 w-full cursor-pointer rounded-lg bg-[#2563EB] py-2.5 text-[13px] sm:text-[14px] font-medium text-white disabled:cursor-not-allowed disabled:bg-[#F1F5F9] disabled:text-[#9CA3AF]"
               >
                 Save note

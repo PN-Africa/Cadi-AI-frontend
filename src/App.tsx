@@ -25,7 +25,7 @@ import ActivityDetails from "./pages/ActivityDetails";
 import ResolveStatus from "./pages/ResolveStatus";
 import EventResolved from "./pages/EventResolved";
 import PatientHistory from "./pages/PatientHistory";
-import Overview from "./pages/Overview";
+import Drafts from "./pages/Draft";
 import Notifications from "./pages/Notifications";
 import Settings from "./pages/Settings";
 
@@ -162,8 +162,8 @@ const router = createBrowserRouter([
             ],
           },
           {
-            path: "/overview",
-            element: <Overview />,
+            path: "/drafts",
+            element: <Drafts />,
           },
           {
             path: "/notifications",

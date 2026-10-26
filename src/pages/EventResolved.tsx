@@ -96,7 +96,11 @@ const EventResolved = () => {
     );
   }
 
-  const resolution = readResolution(`resolution:${patient.id}:${event.id}`);
+  // The backend says whether the event is resolved; it doesn't return the reason/notes,
+  // so those come from what was submitted in this session (blank -> "Not provided").
+  const resolution = event.isResolved
+    ? readResolution(`resolution:${patient.id}:${event.id}`) ?? { reason: "", notes: "" }
+    : null;
 
   if (!resolution) {
     return (
@@ -165,7 +169,7 @@ const EventResolved = () => {
               <div>
                 <dt className="text-[11px] sm:text-[12px] text-[#6B7C93]">Inactivity duration</dt>
                 <dd className="mt-1 text-[12px] sm:text-[16px] font-medium text-primary">
-                  Not provided
+                  {event.inactivityDuration || "Not provided"}
                 </dd>
               </div>
             )}

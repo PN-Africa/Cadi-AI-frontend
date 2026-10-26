@@ -72,3 +72,54 @@ export interface ActivityEvent {
   timestamp: string;
   level: PatientStatus;
 }
+
+// Append these to your existing src/data/patientTypes.ts.
+// (ActivityEvent, Patient, PatientSummary, etc. stay exactly as they are.)
+
+// GET /patients/{id}/events/{eventId} - an ActivityEvent plus the detail fields
+export interface EventDetail extends ActivityEvent {
+  source: string;
+  inactivityDuration: string;
+  caregiverNotes: string;
+  isResolved: boolean;
+}
+
+// GET /patients/{id}/history
+export type HistoryStatus = "resolved" | "open";
+
+export interface HistoryRecord {
+  id: string;
+  eventId: string;
+  timestamp: number | null; // epoch ms, null if the backend date couldn't be read
+  time: string;
+  title: string;
+  category: string;
+  status: HistoryStatus;
+  fields: { label: string; value: string }[];
+}
+
+// GET /notifications
+export type AlertType = "urgent" | "follow-up" | "update";
+
+export interface NotificationAlert {
+  id: string;
+  patientId: string | null; // null when the patient code isn't in the patient list
+  patientName: string;
+  patientCode: string;
+  type: AlertType;
+  read: boolean;
+  eventId: string | null;
+}
+
+export interface NotificationSummary {
+  all: number;
+  unread: number;
+  urgent: number;
+  followUp: number;
+  read: number;
+}
+
+export interface NotificationsData {
+  alerts: NotificationAlert[];
+  summary: NotificationSummary | null;
+}
