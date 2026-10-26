@@ -1,5 +1,8 @@
+import { useEffect } from "react";
 import { LucideMenu } from "lucide-react";
 import { useAuthStore } from "../auth/auth";
+import { useProfileStore } from "../data/profile";
+import { getSettings } from "../services/apiSettings";
 import Notifications from "./Notification";
 import SearchBar from "./SearchBar";
 import type { DashboardAlert } from "../services/apiDashboard";
@@ -10,12 +13,40 @@ interface NavbarProps {
   notifications?: DashboardAlert[];
 }
 
+const titles = ["dr", "mr", "mrs", "ms", "prof"];
+
+const getFirstName = (fullName: string) => {
+  const parts = fullName.trim().split(/\s+/).filter(Boolean);
+  const first = parts.find(
+    (part, index) =>
+      index === parts.length - 1 || !titles.includes(part.toLowerCase().replace(/\.$/, ""))
+  );
+  return first ?? "";
+};
+
 const Navbar = ({ onMenuClick, notifications = [] }: NavbarProps) => {
   const user = useAuthStore((state) => state.user);
+  const profileName = useProfileStore((state) => state.name);
+  const setProfileName = useProfileStore((state) => state.setName);
 
-  const displayName = user?.name?.trim() || "";
-  // const initial = displayName.charAt(0).toUpperCase() || "U";
+  useEffect(() => {
+    let cancelled = false;
+    setProfileName("");
 
+    getSettings()
+      .then((settings) => {
+        if (!cancelled) setProfileName(settings.profile.fullName);
+      })
+      .catch(() => {
+        // keep the fallback name if settings can't be loaded
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [setProfileName]);
+
+const displayName = getFirstName(profileName || user?.name || "");
   return (
     <header className="sticky top-0 z-20 bg-[#F8F9FF] px-4 sm:px-6 lg:px-8 py-3 lg:py-6 flex flex-wrap items-center justify-between gap-3">
       <div className="flex items-center lg:gap-15 min-w-0 flex-1">
