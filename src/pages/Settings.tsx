@@ -3,7 +3,7 @@ import { LucideMenu } from "lucide-react";
 import { useAuthStore } from "../auth/auth";
 import { useProfileStore } from "../data/profile";
 import { getSettings } from "../services/apiSettings";
-import Notifications from "./Notifications";
+import Notifications from "../components/Notification";
 import SearchBar from "../components/SearchBar";
 import type { DashboardAlert } from "../services/apiDashboard";
 import profileicon from "../assets/profile-circle.svg"
