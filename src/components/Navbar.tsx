@@ -3,7 +3,7 @@ import { LucideMenu } from "lucide-react";
 import { useAuthStore } from "../auth/auth";
 import { useProfileStore } from "../data/profile";
 import { getSettings } from "../services/apiSettings";
-import Notifications from "./Notification";
+// import Notifications from "./Notification";
 import SearchBar from "./SearchBar";
 import type { DashboardAlert } from "../services/apiDashboard";
 import profileicon from "../assets/profile-circle.svg"
@@ -24,7 +24,7 @@ const getFirstName = (fullName: string) => {
   return first ?? "";
 };
 
-const Navbar = ({ onMenuClick, notifications = [] }: NavbarProps) => {
+const Navbar = ({ onMenuClick }: NavbarProps) => {
   const user = useAuthStore((state) => state.user);
   const profileName = useProfileStore((state) => state.name);
   const setProfileName = useProfileStore((state) => state.setName);
@@ -69,7 +69,6 @@ const displayName = getFirstName(profileName || user?.name || "");
       </div>
 
       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-        <Notifications items={notifications} />
         <img src={profileicon} className="size-7 shrink-0" />
       </div>
     </header>
