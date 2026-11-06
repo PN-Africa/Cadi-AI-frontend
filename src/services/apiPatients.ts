@@ -353,7 +353,6 @@ export const getPatientActivity = (id: string): Promise<ActivityEvent[]> =>
       `/patients/${encodeURIComponent(id)}/activity-timeline`
     );
 
-    // newest first
     return (Array.isArray(res.data) ? res.data : [])
       .map(toActivityEvent)
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
@@ -375,7 +374,6 @@ export const getPatientHistory = (id: string): Promise<HistoryRecord[]> =>
     return (Array.isArray(res.data) ? res.data : []).map(toHistoryRecord);
   });
 
-// POST - caregiver only
 export const addEventNote = async (patientId: string, eventId: string, note: string) => {
   await axiosPrivate.post(
     `/patients/${encodeURIComponent(patientId)}/events/${encodeURIComponent(eventId)}/note`,

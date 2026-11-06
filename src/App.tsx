@@ -36,6 +36,7 @@ import UserForm from "./pages/UserForm";
 import Professionals from "./pages/Professionals";
 import { useAuthStore } from "./auth/auth";
 import { isAdminRole } from "./auth/roles";
+import FailedAction from "./errors/FailedAction";
 
 interface Crumb {
   label: string;
@@ -128,6 +129,10 @@ const LegacyPatientRedirect = () => {
 };
 
 const router = createBrowserRouter([
+  {
+    errorElement: <FailedAction />,
+    children: [
+      
   // Public routes
   {
     path: "/",
@@ -270,6 +275,10 @@ const router = createBrowserRouter([
       },
     ],
   },
+    ],
+
+  }
+
 ]);
 
 const App = () => {

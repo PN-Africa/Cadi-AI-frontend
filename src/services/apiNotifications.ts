@@ -7,7 +7,6 @@ import type {
   NotificationsData,
 } from "../data/patientTypes";
 
-// GET /notifications
 export interface NotificationsResponse {
   summary?: {
     numberOfAlerts?: number;
@@ -32,7 +31,6 @@ const normalizeAlertType = (value?: string): AlertType => {
   return "update";
 };
 
-// "Jane Doe - PAT-1001" -> { name: "Jane Doe", code: "PAT-1001" }
 const splitPatient = (value?: string) => {
   const text = (value ?? "").trim();
   const index = text.lastIndexOf(" - ");
@@ -40,10 +38,8 @@ const splitPatient = (value?: string) => {
   return { name: text.slice(0, index).trim(), code: text.slice(index + 3).trim() };
 };
 
-// "Jane Doe (PAT-1001)" -> "PAT-1001"
 const codeFromDisplay = (display: string) => /\(([^)]+)\)\s*$/.exec(display)?.[1]?.trim() ?? "";
 
-// "/patients/events/<id>" -> "<id>"
 const eventIdFromAction = (action?: string) => {
   const last = (action ?? "").split("?")[0].split("/").filter(Boolean).pop();
   if (!last) return null;
@@ -56,8 +52,6 @@ const eventIdFromAction = (action?: string) => {
 
 export const getNotifications = (): Promise<NotificationsData> =>
   dedupeRequest("notifications", async () => {
-    // The notification only carries the patient's code, so the patient list
-    // (already cached/deduped by the list page) is used to find the patient id.
     const [res, patients] = await Promise.all([
       axiosPrivate.get<NotificationsResponse>(`/notifications`),
       getPatients().catch(() => []),
