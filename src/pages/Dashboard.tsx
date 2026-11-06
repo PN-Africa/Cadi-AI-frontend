@@ -14,6 +14,9 @@ import {
 } from "lucide-react";
 import usericon from "../assets/profile-2user.svg"
 import Loading from "../components/Loading";
+import { useAuthStore } from "../auth/auth";
+import { isAdminRole } from "../auth/roles";
+import AdminDashboard from "./AdminDashboard";
 import type { LayoutContext } from "../layout/Layout";
 import {
   getDashboard,
@@ -373,7 +376,7 @@ const EmptyState = () => (
   </div>
 );
 
-const Dashboard = () => {
+const UserDashboard = () => {
   const { setNotifications } = useOutletContext<LayoutContext>();
   const [data, setData] = useState<DashboardData | null>(null);
   const [status, setStatus] = useState<LoadStatus>("loading");
@@ -508,6 +511,13 @@ const Dashboard = () => {
       )}
     </div>
   );
+};
+
+// Admins get their own dashboard; everyone else sees the dashboard above.
+const Dashboard = () => {
+  const role = useAuthStore((state) => state.user?.role);
+
+  return isAdminRole(role) ? <AdminDashboard /> : <UserDashboard />;
 };
 
 export default Dashboard;

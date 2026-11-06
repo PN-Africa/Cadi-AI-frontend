@@ -13,11 +13,27 @@ const getInitials = (name: string) =>
     .join("");
 
 const tabClass = ({ isActive }: { isActive: boolean }) =>
-  `flex w-full items-center justify-center border-b px-4 py-1.5 text-center text-[13px] sm:text-[15px] ${
+  `relative isolate overflow-hidden flex w-full items-center justify-center border-b px-4 py-1.5 text-center text-[13px] sm:text-[15px] transition-colors duration-300 ${
     isActive
-      ? "border-[#1D4ED8] bg-[#DBEAFE] text-[#1D4ED8]"
+      ? "border-[#1D4ED8] text-[#1D4ED8]"
       : "border-transparent text-primary hover:bg-white"
   }`;
+
+const Tab = ({ to, end, children }: { to: string; end?: boolean; children: ReactNode }) => (
+  <NavLink to={to} end={end} className={tabClass}>
+    {({ isActive }) => (
+      <>
+        <span
+          aria-hidden="true"
+          className={`absolute inset-0 -z-10 origin-bottom bg-[#DBEAFE] transition-transform duration-300 ease-out motion-reduce:transition-none ${
+            isActive ? "scale-y-100" : "scale-y-0"
+          }`}
+        />
+        {children}
+      </>
+    )}
+  </NavLink>
+);
 
 const MessageCard = ({
   title,
@@ -108,12 +124,8 @@ const Patient = () => {
       </header>
 
       <nav aria-label="Patient sections" className="grid grid-cols-2">
-        <NavLink to={`/patient/${patient.id}`} end className={tabClass}>
-          Monitoring
-        </NavLink>
-        <NavLink to={`/patient/${patient.id}/activity`} className={tabClass}>
-          Activity
-        </NavLink>
+        <Tab to={`/patient/${patient.id}`} end>Monitoring</Tab>
+        <Tab to={`/patient/${patient.id}/activity`}>Activity</Tab>
       </nav>
 
       <Outlet context={{ patient, refreshPatient: refresh }} />

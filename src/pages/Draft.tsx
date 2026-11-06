@@ -116,6 +116,7 @@ const DraftEditor = ({ patient, event, patients, onPatientChange }: DraftEditorP
   const caregiverName = profileName || user?.name?.trim() || user?.email || "";
 
   const [notes, setNotes] = useState(event?.caregiverNotes ?? "");
+  const [savedNotes, setSavedNotes] = useState(event?.caregiverNotes ?? "");
   const [resolutionStatus, setResolutionStatus] = useState(resolutionStatuses[0]);
   const [resolutionNote, setResolutionNote] = useState("");
   const [nextReview, setNextReview] = useState(reviewOptions[0]);
@@ -139,23 +140,25 @@ const DraftEditor = ({ patient, event, patients, onPatientChange }: DraftEditorP
       return;
     }
 
+    const noteText = notes.trim();
+    if (!isHealthcare && !noteText && !resolutionNote.trim()) {
+      toast.error("Add a note or resolution note before saving your draft.");
+      return;
+    }
+
     setSaving("draft");
     try {
-      if (isHealthcare) {
-        await resolveEvent(patient.id, event.id, {
-          resolutionReason: resolutionStatus,
-          resolutionNotes: buildResolutionNotes(),
-          updatedPatientStatus: toApiStatus(patient.status),
-          isDraft: true,
-        });
-      } else {
-        const text = notes.trim();
-        if (!text) {
-          toast.error("Add a note before saving your draft.");
-          return;
-        }
-        await addEventNote(patient.id, event.id, text);
+      if (!isHealthcare && noteText && noteText !== savedNotes.trim()) {
+        await addEventNote(patient.id, event.id, noteText);
+        setSavedNotes(noteText);
       }
+
+      await resolveEvent(patient.id, event.id, {
+        resolutionReason: resolutionStatus,
+        resolutionNotes: buildResolutionNotes(),
+        updatedPatientStatus: toApiStatus(patient.status),
+        isDraft: true,
+      });
 
       setSavedAt(new Date().toISOString());
       toast.success("Draft saved");
@@ -398,7 +401,6 @@ const DraftsContent = () => {
   const [params, setParams] = useSearchParams();
   const { patients, isLoading: loadingPatients, hasError: patientsError, reload } = usePatients();
 
-  // ?patient=<id>&event=<id> deep-links to a draft; otherwise the most urgent patient is used.
   const patientId = useMemo(() => {
     const requested = params.get("patient");
     if (requested && patients.some((item) => item.id === requested)) return requested;
@@ -481,7 +483,6 @@ const DraftsContent = () => {
 const Drafts = () => {
   const role = useAuthStore((state) => state.user?.role);
 
-  // admins use the Tasks page instead
   if (isAdminRole(role)) return <Navigate to="/dashboard" replace />;
 
   return <DraftsContent />;

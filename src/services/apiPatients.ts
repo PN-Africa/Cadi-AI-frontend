@@ -14,10 +14,6 @@ import type {
   StatusIndicator,
 } from "../data/patientTypes";
 
-/* ------------------------------------------------------------------ */
-/* Response shapes                                                     */
-/* ------------------------------------------------------------------ */
-
 export interface PatientListItemResponse {
   id: string;
   patientDisplay: string;
@@ -25,7 +21,6 @@ export interface PatientListItemResponse {
   lastActivity: string;
 }
 
-// GET /patients/{id}
 export interface PatientDetailResponse {
   id: string;
   name: string;
@@ -46,7 +41,6 @@ export interface PatientDetailResponse {
   };
 }
 
-// GET /patients/{id}/monitoring
 export interface PatientMonitoringResponse {
   charts: {
     timestamp: string;
@@ -58,14 +52,12 @@ export interface PatientMonitoringResponse {
   status: string;
 }
 
-// GET /patients/{id}/activity-timeline
 export interface ActivityTimelineResponse {
   id: string;
   detection: string;
   time: string;
 }
 
-// GET /patients/{id}/events/{eventId}
 export interface EventDetailResponse {
   id: string;
   detectionName: string;
@@ -79,7 +71,6 @@ export interface EventDetailResponse {
   resolvedStatus?: string;
 }
 
-// GET /patients/{id}/history
 export interface HistoryItemResponse {
   id: string;
   timeAndRecordingIndication: string;
@@ -93,17 +84,12 @@ export interface HistoryItemResponse {
   };
 }
 
-// PATCH /patients/{id}/events/{eventId}/resolve  (healthcare professional only)
 export interface ResolveEventPayload {
   resolutionReason: string;
   resolutionNotes: string;
   updatedPatientStatus: string;
   isDraft: boolean;
 }
-
-/* ------------------------------------------------------------------ */
-/* Helpers                                                             */
-/* ------------------------------------------------------------------ */
 
 export const isNotFoundError = (error: unknown) =>
   isAxiosError(error) && error.response?.status === 404;
@@ -124,7 +110,6 @@ const normalizeStatus = (value?: string): PatientStatus => {
   return "needs attention";
 };
 
-// "needs attention" -> "NEEDS_ATTENTION" (the format the backend sends and expects)
 export const toApiStatus = (status: PatientStatus) =>
   status.toUpperCase().replace(/\s+/g, "_");
 
@@ -137,8 +122,6 @@ const eventTypes: Record<string, { label: string; level: PatientStatus }> = {
   POSITION_CHANGE: { label: "Position Changed", level: "normal" },
 };
 
-// The timeline/event endpoints send a display name ("Movement detected"), not a
-// type code, so it is turned into the same codes the UI already relies on.
 const detectionAliases: Record<string, string> = {
   INACTIVITY_DETECTED: "INACTIVITY_DETECTION",
   HIGH_TEMPERATURE_DETECTED: "HIGH_TEMPERATURE",
@@ -173,10 +156,6 @@ const indicatorFields = [
   ["normalMovementMins", "NORMAL_MOVEMENT"],
   ["positionChangeMins", "POSITION_CHANGE"],
 ] as const;
-
-/* ------------------------------------------------------------------ */
-/* Mappers                                                             */
-/* ------------------------------------------------------------------ */
 
 const toPatientSummary = (raw: PatientListItemResponse): PatientSummary => ({
   id: raw.id,
@@ -280,9 +259,6 @@ const toEventDetail = (raw: EventDetailResponse): EventDetail => {
   };
 };
 
-/* History comes back as combined strings ("Checked and stable - Last checked
-   10 mins ago"), so they are split into the separate fields the UI shows. */
-
 const splitOnce = (value: string | undefined, separator = " - "): [string, string] => {
   const text = (value ?? "").trim();
   const index = text.indexOf(separator);
@@ -295,7 +271,6 @@ const months = [
   "july", "august", "september", "october", "november", "december",
 ];
 
-// "October 17, 2026" + "02:30 PM" -> epoch ms (null if it can't be read)
 const parseRecordedAt = (date: string, time: string): number | null => {
   const d = /([A-Za-z]+)\s+(\d{1,2}),?\s+(\d{4})/.exec(date);
   const t = /(\d{1,2}):(\d{2})\s*(AM|PM)?/i.exec(time);
@@ -350,10 +325,6 @@ const toHistoryRecord = (raw: HistoryItemResponse): HistoryRecord => {
   };
 };
 
-/* ------------------------------------------------------------------ */
-/* Requests                                                            */
-/* ------------------------------------------------------------------ */
-
 export const getPatients = (): Promise<PatientSummary[]> =>
   dedupeRequest("patients", async () => {
     const res = await axiosPrivate.get<PatientListItemResponse[]>(`/patients`);
@@ -376,8 +347,6 @@ export const getPatientMonitoring = (id: string): Promise<PatientMonitoring> =>
     return toMonitoring(res.data);
   });
 
-// Uses /activity-timeline because it carries the real event id that
-// /events/{eventId} needs (the older /activity feed has no id).
 export const getPatientActivity = (id: string): Promise<ActivityEvent[]> =>
   dedupeRequest(`activity:${id}`, async () => {
     const res = await axiosPrivate.get<ActivityTimelineResponse[]>(
@@ -414,14 +383,6 @@ export const addEventNote = async (patientId: string, eventId: string, note: str
   );
 };
 
-// PATCH - healthcare professional only
-export const resolveEvent = async (
-  patientId: string,
-  eventId: string,
-  payload: ResolveEventPayload
-) => {
-  await axiosPrivate.patch(
-    `/patients/${encodeURIComponent(patientId)}/events/${encodeURIComponent(eventId)}/resolve`,
-    payload
-  );
+export const resolveEvent = async (eventId: string, payload: ResolveEventPayload) => {
+  await axiosPrivate.patch(`/patients/events/${encodeURIComponent(eventId)}/resolve`, payload);
 };

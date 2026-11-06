@@ -3,18 +3,54 @@ import { LucideSlidersHorizontal } from "lucide-react";
 import StatusBadge from "../components/StatusBadge";
 import Loading from "../components/Loading";
 import { usePatients } from "../data/usePatients";
+import { useAuthStore } from "../auth/auth";
+import { isAdminRole } from "../auth/roles";
 
 const columns =
   "grid-cols-[minmax(0,1fr)_auto] sm:grid-cols-[minmax(0,2fr)_minmax(0,1.2fr)_minmax(0,1fr)_2rem]";
 
 const PatientList = () => {
   const { patients, isLoading, hasError, reload } = usePatients();
+  const isAdmin = isAdminRole(useAuthStore((state) => state.user?.role));
+
+ const formatLastActivity = (value?: string | null) => {
+  if (!value) return "—";
+
+  const match = value.match(/(\d+)\s*(min|mins|minute|minutes|hr|hrs|hour|hours|day|days)/i);
+  if (!match) return value;
+
+  const n = parseInt(match[1], 10);
+  const unit = match[2].toLowerCase();
+
+  let mins = n;
+  if (unit.startsWith("h")) mins = n * 60;
+  else if (unit.startsWith("d")) mins = n * 60 * 24;
+
+  if (mins < 1) return "Just now";
+  if (mins < 60) return `${mins} min${mins === 1 ? "" : "s"} ago`;
+
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs} hr${hrs === 1 ? "" : "s"} ago`;
+
+  const days = Math.floor(hrs / 24);
+  return `${days} day${days === 1 ? "" : "s"} ago`;
+};
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 flex flex-col gap-4">
-      <h1 className="font-medium text-[20px] sm:text-[22px] lg:text-[24px] text-primary py-5">
-        Patients
-      </h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="font-medium text-[20px] sm:text-[22px] lg:text-[24px] text-primary py-5">
+          Patients
+        </h1>
+        {isAdmin && (
+          <Link
+            to="/patients/new"
+            className="rounded-md bg-[#2563EB] px-5 py-2.5 text-[13px] font-medium text-white hover:bg-[#1D4ED8]"
+          >
+            Add patient
+          </Link>
+        )}
+      </div>
 
       <div role="table" aria-label="Patients" className="flex flex-col gap-3">
         <div
@@ -93,7 +129,7 @@ const PatientList = () => {
                   className="col-start-2 row-start-2 justify-self-end text-[12px] sm:text-[13px] text-primary sm:col-start-3 sm:row-start-1 sm:justify-self-center"
                 >
                   <span className="sm:hidden text-[#6B7C93]">Last activity </span>
-                  {patient.lastActivity}
+                  {formatLastActivity(patient.lastActivity)}
                 </div>
               </div>
             ))

@@ -105,7 +105,6 @@ const ResolveStatus = () => {
       await resolveEvent(patient.id, event.id, {
         resolutionReason: reason,
         resolutionNotes: notes,
-        // keeps the patient's current status; the resolve itself doesn't assert a medical outcome
         updatedPatientStatus: toApiStatus(patient.status),
         isDraft: false,
       });
@@ -114,7 +113,6 @@ const ResolveStatus = () => {
       throw error;
     }
 
-    // the event endpoint doesn't return reason/notes, so keep them for the confirmation page
     sessionStorage.setItem(
       `resolution:${patient.id}:${event.id}`,
       JSON.stringify({ reason, notes })

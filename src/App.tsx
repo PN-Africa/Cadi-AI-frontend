@@ -28,6 +28,14 @@ import PatientHistory from "./pages/PatientHistory";
 import Drafts from "./pages/Draft";
 import Notifications from "./pages/Notifications";
 import Settings from "./pages/Settings";
+import AssignTask from "./pages/AssignTask";
+import AddPatient from "./pages/AddPatient";
+import EditPatient from "./pages/EditPatient";
+import Users from "./pages/Users";
+import UserForm from "./pages/UserForm";
+import Professionals from "./pages/Professionals";
+import { useAuthStore } from "./auth/auth";
+import { isAdminRole } from "./auth/roles";
 
 interface Crumb {
   label: string;
@@ -109,6 +117,11 @@ const WithBreadcrumbs = ({ padded = false }: { padded?: boolean }) => {
   );
 };
 
+const AdminOnly = () => {
+  const role = useAuthStore((state) => state.user?.role);
+  return isAdminRole(role) ? <Outlet /> : <Navigate to="/dashboard" replace />;
+};
+
 const LegacyPatientRedirect = () => {
   const { id } = useParams();
   return <Navigate to={`/patient/${id}`} replace />;
@@ -162,8 +175,23 @@ const router = createBrowserRouter([
             ],
           },
           {
+            element: <AdminOnly />,
+            children: [
+              { path: "/patients/new", element: <AddPatient /> },
+              { path: "/patients/:id/edit", element: <EditPatient /> },
+              { path: "/users", element: <Users /> },
+              { path: "/users/new", element: <UserForm /> },
+              { path: "/users/:id", element: <UserForm /> },
+              { path: "/tasks/professionals", element: <Professionals /> },
+            ],
+          },
+          {
             path: "/drafts",
             element: <Drafts />,
+          },
+          {
+            path: "/tasks",
+            element: <AssignTask />
           },
           {
             path: "/notifications",

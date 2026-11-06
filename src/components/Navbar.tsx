@@ -7,6 +7,7 @@ import { getSettings } from "../services/apiSettings";
 import SearchBar from "./SearchBar";
 import type { DashboardAlert } from "../services/apiDashboard";
 import profileicon from "../assets/profile-circle.svg"
+import { useNavigate } from "react-router-dom";
 
 interface NavbarProps {
   onMenuClick: () => void;
@@ -28,6 +29,7 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
   const user = useAuthStore((state) => state.user);
   const profileName = useProfileStore((state) => state.name);
   const setProfileName = useProfileStore((state) => state.setName);
+  const navigate = useNavigate();
 
   useEffect(() => {
     let cancelled = false;
@@ -38,7 +40,6 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
         if (!cancelled) setProfileName(settings.profile.fullName);
       })
       .catch(() => {
-        // keep the fallback name if settings can't be loaded
       });
 
     return () => {
@@ -46,31 +47,37 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
     };
   }, [setProfileName]);
 
-const displayName = getFirstName(profileName || user?.name || "");
+  const displayName = getFirstName(profileName || user?.name || "");
+
   return (
-    <header className="sticky top-0 z-20 bg-[#F8F9FF] px-4 sm:px-6 lg:px-8 py-3 lg:py-6 flex flex-wrap items-center justify-between gap-3">
-      <div className="flex items-center lg:gap-15 min-w-0 flex-1">
+    <header className="sticky top-0 z-20 flex flex-wrap items-center gap-x-3 gap-y-3 bg-[#F8F9FF] px-4 py-3 sm:px-6 lg:h-24 lg:flex-nowrap lg:gap-x-6 lg:px-8 lg:py-0">
+      <div className="flex min-w-0 flex-1 items-center gap-3 md:flex-initial">
         <button
           type="button"
           onClick={onMenuClick}
           aria-label="Open navigation menu"
-          className="lg:hidden py-2 rounded-md cursor-pointer hover:bg-white"
+          className="-ml-1.5 shrink-0 cursor-pointer rounded-md p-1.5 hover:bg-white lg:hidden"
         >
           <LucideMenu className="size-6 text-primary" />
         </button>
 
-        <p className="font-semibold text-[16px] sm:text-[24px] lg:text-[32px] text-primary truncate">
+        <p className="min-w-0 truncate text-[18px] font-semibold text-primary sm:text-[24px] lg:text-[26px] xl:text-[32px]">
           Welcome Back{displayName ? `, ${displayName}` : ""}
         </p>
-
-        <div className="order-last w-full md:order-none md:w-72 lg:w-120">
-          <SearchBar />
-        </div>
       </div>
 
-      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-        <img src={profileicon} className="size-7 shrink-0" />
+      <div className="order-last w-full md:order-none md:w-64 md:shrink-0 lg:w-72 xl:w-96 2xl:w-120">
+        <SearchBar />
       </div>
+
+      <button
+        type="button"
+        onClick={() => navigate("/settings")}
+        aria-label="Open settings"
+        className="ml-auto shrink-0 cursor-pointer"
+      >
+        <img src={profileicon} alt="" className="size-7" />
+      </button>
     </header>
   );
 };
