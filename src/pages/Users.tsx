@@ -10,7 +10,7 @@ import { LoadState, useLoad } from "../components/AdminForm";
 import user from "../assets/profile-2user-active.svg"
 
 const addBtn =
-  "h-10 rounded-md bg-[#2563EB] px-5 text-[13px] font-medium leading-10 text-white hover:bg-[#1D4ED8]";
+  "h-10 rounded-lg bg-[#2563EB] px-5 text-[13px] font-medium leading-10 text-white hover:bg-[#1D4ED8]";
 
 const badgeTone: Record<string, string> = {
   ON_DUTY: "bg-[#DBEAFE] text-[#1D4ED8]",
@@ -163,14 +163,14 @@ const Users = () => {
 
       {header}
 
-      <section className="rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] p-5">
-        <div className="flex items-start gap-3">
-            <img src={user} alt="User" className="size-5" />
+      <section className="rounded-2xl border border-[#BFDBFE] bg-[#EFF6FF] py-4 px-5">
+        <div className="flex items-start gap-4">
+            <img src={user} alt="User" className="size-5 mt-4" />
           <div className="min-w-0 flex-1">
             <h2 className="text-[13px] font-semibold text-primary sm:text-[18px]">
               Browse healthcare and caregiver professionals
             </h2>
-            <p className="mt-1 text-[12px] text-primary sm:text-[13px]">
+            <p className="text-[12px] text-primary sm:text-[13px]">
               Review availability, roles, and current status before assigning a professional to watch and care for a patient.
             </p>
           </div>
@@ -184,7 +184,7 @@ const Users = () => {
           Use the directory below to browse available professionals, compare roles and availability, and assign the best fit to a patient.
         </p>
 
-        <div className="mt-3 flex flex-wrap justify-between gap-2 text-[12px] text-[#6B7C93]">
+        <div className="mt-1 flex flex-wrap justify-between gap-2 text-[12px] text-[#6B7C93]">
           <span className="flex items-center gap-1.5">
             <LucideClock aria-hidden="true" className="size-3.5" />
             {onDuty} on duty now
@@ -193,7 +193,7 @@ const Users = () => {
         </div>
       </section>
 
-      <section className="rounded-xl border border-[#C6C6CD99] bg-white p-5">
+      <section className="rounded-2xl border border-[#C6C6CD99] bg-white p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-[18px] font-semibold text-primary">All professionals</h2>
           <div className="flex gap-2">
@@ -211,7 +211,7 @@ const Users = () => {
         <div className="mt-4 overflow-x-auto">
           <div className="min-w-[640px]">
             <div
-              className={`${cols} rounded-md border border-transparent bg-[#F8F9FF] px-4 py-3 text-[12px] text-[#6B7C93]`}
+              className={`${cols} rounded-xl border border-transparent bg-[#F8F9FF] px-4 py-3 text-[12px] text-[#6B7C93]`}
             >
               <span>Professional</span>
               <span>Role</span>
@@ -230,7 +230,7 @@ const Users = () => {
                   return (
                     <li
                       key={p.id}
-                      className={`${cols} rounded-lg border border-[#C6C6CD99] bg-white px-4 py-4 text-[13px]`}
+                      className={`${cols} rounded-xl border border-[#C6C6CD99] bg-white px-4 py-4 text-[13px]`}
                     >
                       <span className="flex min-w-0 items-center gap-3 font-medium text-primary">
                         <Avatar p={p} />
@@ -256,7 +256,7 @@ const Users = () => {
                         type="button"
                         disabled={!ok || busyId === p.id}
                         onClick={() => assign(p)}
-                        className={`h-8 w-[72px] rounded-md text-[12px] font-medium ${
+                        className={`h-8 w-[72px] rounded-lg text-[12px] font-medium ${
                           ok
                             ? "cursor-pointer bg-[#2563EB] text-white hover:bg-[#1D4ED8] disabled:opacity-60"
                             : "cursor-not-allowed bg-[#F1F5F9] text-[#6B7C93]"
