@@ -153,7 +153,7 @@ const DraftEditor = ({ patient, event, patients, onPatientChange }: DraftEditorP
         setSavedNotes(noteText);
       }
 
-      await resolveEvent(patient.id, event.id, {
+      await resolveEvent( event.id, {
         resolutionReason: resolutionStatus,
         resolutionNotes: buildResolutionNotes(),
         updatedPatientStatus: toApiStatus(patient.status),
@@ -188,7 +188,7 @@ const DraftEditor = ({ patient, event, patients, onPatientChange }: DraftEditorP
     try {
       const resolutionNotes = buildResolutionNotes();
 
-      await resolveEvent(patient.id, event.id, {
+      await resolveEvent( event.id, {
         resolutionReason: resolutionStatus,
         resolutionNotes,
         updatedPatientStatus: toApiStatus(patient.status),

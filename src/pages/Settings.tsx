@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { LucideInfo, LucideUser } from "lucide-react";
+import { LucideInfo } from "lucide-react";
 import Loading from "../components/Loading";
 import { useAuthStore } from "../auth/auth";
 import { useProfileStore } from "../data/profile";

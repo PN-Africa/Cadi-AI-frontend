@@ -102,7 +102,7 @@ const ResolveStatus = () => {
 
   const handleResolve = async ({ reason, notes }: ResolutionValues) => {
     try {
-      await resolveEvent(patient.id, event.id, {
+      await resolveEvent( event.id, {
         resolutionReason: reason,
         resolutionNotes: notes,
         updatedPatientStatus: toApiStatus(patient.status),
