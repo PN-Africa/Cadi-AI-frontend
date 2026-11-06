@@ -29,15 +29,12 @@ import {
 
 type LoadStatus = "loading" | "error" | "success";
 
-// Week-over-week change shown in the badge on each summary card. The badge only
-// renders when the API sends the value (field names are a guess - see notes).
 type MetricsWithTrends = DashboardMetrics & {
   totalPatientsChange?: number | null;
   needsAttentionChange?: number | null;
   emergencyAlertsChange?: number | null;
 };
 
-// Used until real numbers exist (e.g. no patients yet), so the cards and ring still render.
 const emptyMetrics: DashboardMetrics = {
   totalPatientsMonitored: 0,
   totalPatientsNeedingAttention: 0,

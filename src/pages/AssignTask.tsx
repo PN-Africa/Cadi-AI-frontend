@@ -31,7 +31,7 @@ import {
 } from "../services/apiTasks";
 
 const cardClass = "rounded-xl border border-[#C6C6CD99] bg-white p-5";
-const headingClass = "text-[16px] sm:text-[18px] font-semibold text-primary";
+const headingClass = "text-[18px] sm:text-[22px] lg:text-[24px] text-primary";
 const fieldClass =
   "w-full rounded-lg border border-[#C6C6CD99] bg-[#F8F9FF] px-3 py-2.5 text-[12px] sm:text-[13px] text-primary outline-none placeholder:text-[#9CA3AF] focus:border-[#2563EB]";
 
@@ -284,7 +284,7 @@ const AssignForm = ({ taskDetails, alert, data, patientName, onAssigned }: Assig
             </span>
             <div className="min-w-0">
               <p className="text-[11px] sm:text-[12px] text-[#6B7C93]">Assigned responder</p>
-              <p className="truncate text-[12px] sm:text-[13px] font-semibold text-primary">
+              <p className="truncate text-[12px] sm:text-[13px] text-primary">
                 {alert.isAssigned ? alert.assignedToName || "Assigned" : "Not assigned"}
               </p>
               <p className="text-[10px] sm:text-[11px] text-[#6B7C93]">
@@ -315,7 +315,7 @@ const AssignForm = ({ taskDetails, alert, data, patientName, onAssigned }: Assig
                     >
                       <ResponderAvatar responder={responder} />
                       <span className="min-w-0">
-                        <span className="block truncate text-[12px] sm:text-[13px] font-semibold text-primary">
+                        <span className="block truncate text-[12px] sm:text-[13px] text-primary">
                           {responder.name}
                         </span>
                         <span className="block truncate text-[10px] sm:text-[11px] text-[#6B7C93]">
@@ -347,7 +347,7 @@ const AssignForm = ({ taskDetails, alert, data, patientName, onAssigned }: Assig
         </section>
 
         <section className="rounded-xl border border-[#DBEAFE] bg-[#EFF6FF] p-5">
-          <h2 className="text-[14px] sm:text-[16px] font-semibold text-primary">Before sending the assignment</h2>
+          <h2 className="text-[14px] sm:text-[16px] text-primary">Before sending the assignment</h2>
           <ul className="mt-3 flex flex-col gap-2.5">
             {checklist.map((item) => (
               <li key={item.label} className="flex items-center gap-2.5 text-[12px] sm:text-[13px] text-primary">
@@ -389,7 +389,7 @@ const AssignTaskContent = () => {
           role="alert"
           className="flex flex-col items-center gap-3 rounded-xl border border-[#C6C6CD99] bg-white p-8 text-center sm:p-10"
         >
-          <p className="font-semibold text-[16px] sm:text-[18px] text-primary">We couldn't load tasks</p>
+          <p className="text-[16px] sm:text-[18px] font-medium text-primary">We couldn't load tasks</p>
           <p className="max-w-md text-[13px] sm:text-[14px] text-[#6B7C93]">
             Check your connection, then try again.
           </p>
@@ -425,7 +425,7 @@ const AssignTaskContent = () => {
       <div className="flex flex-col gap-5 p-4 sm:p-6 lg:p-8">
         {back}
         <div className="flex flex-col items-center gap-2 rounded-xl border border-[#C6C6CD99] bg-white p-8 text-center sm:p-10">
-          <p className="font-semibold text-[16px] sm:text-[18px] text-primary">No alerts need assignment</p>
+          <p className="text-[16px] sm:text-[18px] font-medium text-primary">No alerts need assignment</p>
           <p className="max-w-md text-[13px] sm:text-[14px] text-[#6B7C93]">
             New alert detections will appear here when a caregiver or health professional needs to be assigned.
           </p>
@@ -457,7 +457,7 @@ const AssignTaskContent = () => {
               <LucideAlertTriangle className="size-4" />
             </span>
             <div className="min-w-0">
-              <h2 className="text-[15px] sm:text-[18px] font-semibold text-primary">{alert.detection}</h2>
+              <h2 className="text-[15px] sm:text-[18px] text-primary">{alert.detection}</h2>
               <p className="text-[12px] sm:text-[13px] text-[#6B7C93]">
                 {[patientName, alert.howLong].filter(Boolean).join(" \u2022 ")}
               </p>
@@ -517,25 +517,25 @@ const AssignTaskContent = () => {
             <dl className="mt-4 grid grid-cols-1 gap-3 rounded-xl border border-[#C6C6CD99] bg-[#F8F9FF] p-3 sm:grid-cols-3">
               <div>
                 <dt className="text-[10px] sm:text-[11px] text-[#6B7C93]">Patient</dt>
-                <dd className="mt-1 text-[12px] sm:text-[13px] font-semibold text-primary">
+                <dd className="mt-1 text-[12px] sm:text-[13px] text-primary">
                   {patientName || "Not available"}
                 </dd>
               </div>
               <div>
                 <dt className="text-[10px] sm:text-[11px] text-[#6B7C93]">Event location</dt>
-                <dd className="mt-1 text-[12px] sm:text-[13px] font-semibold text-primary">
+                <dd className="mt-1 text-[12px] sm:text-[13px] text-primary">
                   {data.taskDetails.eventLocation || "Not available"}
                 </dd>
               </div>
               <div>
                 <dt className="text-[10px] sm:text-[11px] text-[#6B7C93]">Patient safety</dt>
-                <dd className="mt-1 text-[12px] sm:text-[13px] font-semibold text-primary">
+                <dd className="mt-1 text-[12px] sm:text-[13px] text-primary">
                   {data.taskDetails.patientSafety || "Unconfirmed"}
                 </dd>
               </div>
             </dl>
 
-            <h3 className="mt-5 text-[12px] sm:text-[13px] font-semibold text-primary">Task requirements</h3>
+            <h3 className="mt-5 text-[12px] sm:text-[13px] text-primary">Task requirements</h3>
             <ul className="mt-3 flex flex-col gap-3">
               {requirements.map(({ title, body, Icon }) => (
                 <li key={title} className="flex items-start gap-3">

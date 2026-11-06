@@ -6,7 +6,6 @@ import {
   LucideArrowLeft,
   LucideChevronDown,
   LucideClipboardList,
-  LucideFolder,
   LucidePhone,
 } from "lucide-react";
 import Loading from "../components/Loading";
@@ -14,6 +13,8 @@ import { useAuthStore } from "../auth/auth";
 import { isAdminRole, isHealthcareRole } from "../auth/roles";
 import { useProfileStore } from "../data/profile";
 import { formatEventDay, formatEventTime } from "../data/formatTime";
+import foldericonActive from "../assets/History icon.svg"
+
 import {
   usePatient,
   usePatientActivity,
@@ -214,18 +215,14 @@ const DraftEditor = ({ patient, event, patients, onPatientChange }: DraftEditorP
           aria-hidden="true"
           className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#DBEAFE] text-[#2563EB]"
         >
-          <LucideFolder className="size-4" />
+          <img src={foldericonActive} className="size-4" />
         </span>
         <div className="min-w-0">
-          <p className="flex flex-wrap items-center gap-2">
-            <span className="text-[13px] sm:text-[14px] font-semibold text-[#1D4ED8]">Draft</span>
+          <p className="flex flex-wrap items-center gap-4">
+            <span className="text-[13px] sm:text-[14px] text-[#1D4ED8]">Draft</span>
             <span className="rounded-md border border-[#BFDBFE] bg-white px-2 py-0.5 text-[10px] sm:text-[11px] text-[#6B7C93]">
               Save draft or resolution
             </span>
-          </p>
-          <p className="mt-1 text-[12px] sm:text-[13px] text-primary">
-            Use this draft page to capture caregiver notes, patient follow-up, and the resolution when the issue
-            is closed.
           </p>
           <p className="mt-1 text-[11px] sm:text-[12px] text-[#6B7C93]">
             Saving a draft keeps your work in progress. Saving a resolution marks the follow-up as complete.
@@ -467,7 +464,7 @@ const DraftsContent = () => {
 
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-[22px] sm:text-[26px] font-semibold text-primary">Draft</h1>
+          <h1 className="text-[20px] sm:text-[24px] lg:text-[28px] text-primary">Draft</h1>
           <p className="mt-1 text-[12px] sm:text-[13px] text-[#6B7C93]">
             Save a draft of your work before you close this page, or save a resolution when the follow-up is
             complete.

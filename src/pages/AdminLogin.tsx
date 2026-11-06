@@ -95,7 +95,6 @@ const AdminMagicLink = ({ onBack }: { onBack: () => void }) => {
             >
             <input
                 type="email"
-                placeholder="e.g. admin@cadiai.com"
                 className="w-full py-1 px-2 outline-none bg-transparent"
                 {...register("email", {
                 required: "This field is required",
@@ -214,7 +213,6 @@ const AdminSignIn = ({ onVerify }: { onVerify: () => void }) => {
             <input
                 type="email"
                 autoComplete="username"
-                placeholder="e.g. admin@cadiai.com"
                 className="w-full py-1 px-2 outline-none bg-transparent"
                 {...register("email", {
                 required: "This field is required",

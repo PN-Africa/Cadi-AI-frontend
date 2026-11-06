@@ -39,7 +39,7 @@ const PatientList = () => {
   return (
     <div className="px-4 sm:px-6 lg:px-8 flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-medium text-[20px] sm:text-[22px] lg:text-[24px] text-primary py-5">
+        <h1 className="text-[20px] sm:text-[24px] lg:text-[28px] text-primary py-5">
           Patients
         </h1>
         {isAdmin && (
