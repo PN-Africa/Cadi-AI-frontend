@@ -98,6 +98,12 @@ export const getErrorMessage = (error: unknown, fallback: string) => {
   if (isAxiosError(error)) {
     const message = error.response?.data?.message;
     if (typeof message === "string" && message.trim()) return message;
+    if (Array.isArray(message)) {
+      const text = message
+        .filter((item) => typeof item === "string" && item.trim())
+        .join(", ");
+      if (text) return text;
+    }
   }
   return fallback;
 };

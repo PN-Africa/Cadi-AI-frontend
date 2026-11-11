@@ -303,7 +303,7 @@ const PatientRow = ({ patient }: { patient: DashboardPatient }) => (
         to={`/patient/${patient.id}`}
         className="text-[12px] sm:text-[13px] text-primary after:absolute after:inset-0 after:content-['']"
       >
-        {patient.name} - {patient.id}
+        {patient.name} - {patient.patientCode || patient.id}
       </Link>
     </div>
 
@@ -358,7 +358,6 @@ const ErrorState = ({ onRetry }: { onRetry: () => void }) => (
   </div>
 );
 
-// Sits inside the patient list card, under the column headers.
 const EmptyState = () => (
   <div className="px-6 py-10 sm:py-12 flex flex-col items-center text-center gap-3">
     <div className="bg-[#EEF3FC] rounded-2xl p-3">
@@ -475,7 +474,7 @@ const UserDashboard = () => {
                 className={`hidden sm:grid ${columns} items-center gap-x-3 border border-transparent px-6 text-[12px] sm:text-[15px] text-primary`}
               >
                 <span role="columnheader">Patients ID</span>
-                <span role="columnheader" className="text-center">Current Condition</span>
+                <span role="columnheader" className="text-center">Last updated</span>
                 <span role="columnheader" className="text-center">Status</span>
                 <span role="columnheader" aria-label="Actions" className="flex justify-end">
                   <LucideSlidersHorizontal className="size-4 text-[#6B7C93]" aria-hidden="true" />
@@ -510,7 +509,6 @@ const UserDashboard = () => {
   );
 };
 
-// Admins get their own dashboard; everyone else sees the dashboard above.
 const Dashboard = () => {
   const role = useAuthStore((state) => state.user?.role);
 

@@ -142,24 +142,26 @@ const DraftEditor = ({ patient, event, patients, onPatientChange }: DraftEditorP
     }
 
     const noteText = notes.trim();
-    if (!isHealthcare && !noteText && !resolutionNote.trim()) {
-      toast.error("Add a note or resolution note before saving your draft.");
+    if (!isHealthcare && !noteText) {
+      toast.error("Add a note before saving your draft.");
       return;
     }
 
     setSaving("draft");
     try {
-      if (!isHealthcare && noteText && noteText !== savedNotes.trim()) {
+      if (noteText && noteText !== savedNotes.trim()) {
         await addEventNote(patient.id, event.id, noteText);
         setSavedNotes(noteText);
       }
 
-      await resolveEvent( event.id, {
-        resolutionReason: resolutionStatus,
-        resolutionNotes: buildResolutionNotes(),
-        updatedPatientStatus: toApiStatus(patient.status),
-        isDraft: true,
-      });
+      if (isHealthcare) {
+        await resolveEvent( event.id, {
+          resolutionReason: resolutionStatus,
+          resolutionNotes: buildResolutionNotes(),
+          updatedPatientStatus: toApiStatus(patient.status),
+          isDraft: true,
+        });
+      }
 
       setSavedAt(new Date().toISOString());
       toast.success("Draft saved");
@@ -267,9 +269,8 @@ const DraftEditor = ({ patient, event, patients, onPatientChange }: DraftEditorP
                 id="draftNotes"
                 rows={4}
                 value={notes}
-                readOnly={isHealthcare}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="Add caregiver notes..."
+                placeholder="Add notes..."
                 className={textareaClass}
               />
             </Row>
@@ -372,7 +373,7 @@ const DraftEditor = ({ patient, event, patients, onPatientChange }: DraftEditorP
           <button
             type="button"
             onClick={handleSaveResolution}
-            disabled={saving !== null}
+            disabled={saving !== null || !isHealthcare}
             className={saveButtonClass}
           >
             {saving === "resolution" ? "Saving..." : "Save resolution"}

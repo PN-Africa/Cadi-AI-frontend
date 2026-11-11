@@ -57,20 +57,48 @@ export interface DashboardData {
   pagination: DashboardPagination;
 }
 
+interface ApiMetrics {
+  totalPatients?: number;
+  emergencyPatients?: number;
+  needsAttentionPatients?: number;
+  normalPatients?: number;
+  activeAlerts?: number;
+}
+
+interface ApiPriorityPatient {
+  id: string;
+  patientIdentifier?: string;
+  status?: string;
+  waitingTime?: string;
+}
+
+interface ApiPatient {
+  id: string;
+  name?: string;
+  patientId?: string;
+  patientCode?: string;
+  currentCondition?: string;
+  recentActivity?: string;
+  status?: string;
+}
+
 interface DashboardApiResponse {
+  metrics?: ApiMetrics;
+  priorityPatients?: ApiPriorityPatient[];
+  statusBreakdown?: {
+    normal?: number;
+    needsAttention?: number;
+    emergency?: number;
+  };
+  patients?: ApiPatient[];
+
   summary?: {
     totalPatients?: number;
     normal?: number;
     needsAttention?: number;
     alerts?: number;
   };
-  data?: Array<{
-    id: string;
-    name?: string;
-    patientCode?: string;
-    recentActivity?: string;
-    status?: string;
-  }>;
+  data?: ApiPatient[];
   alerts?: Array<{
     id: string;
     patientId: string;
@@ -87,6 +115,9 @@ interface DashboardApiResponse {
   };
 }
 
+const num = (value: unknown): number | undefined =>
+  typeof value === "number" && Number.isFinite(value) ? value : undefined;
+
 const normalizeStatus = (value?: string): PatientStatus => {
   const key = (value ?? "").trim().toUpperCase().replace(/[\s-]+/g, "_");
 
@@ -101,20 +132,91 @@ const normalizeDashboardPatientStatus = (value?: string): DashboardPatientStatus
   return status === "Alert" ? "Emergency" : status;
 };
 
-const normalizeDashboard = (raw: DashboardApiResponse, page: number): DashboardData => {
-  const totalPatients = raw.summary?.totalPatients ?? 0;
-  const needsAttention = raw.summary?.needsAttention ?? 0;
-  const alerts = raw.summary?.alerts ?? 0;
-  const normal =
-    raw.summary?.normal ?? Math.max(totalPatients - needsAttention - alerts, 0);
+const splitPatientIdentifier = (value?: string) => {
+  const text = (value ?? "").trim();
+  const index = text.lastIndexOf(" - ");
 
-  const patients: DashboardPatient[] = (raw.data ?? []).map((patient) => ({
-    id: patient.id,
-    name: patient.name ?? "Unnamed patient",
-    patientCode: patient.patientCode ?? "",
-    recentActivity: patient.recentActivity ?? "No recent activity",
-    status: normalizeDashboardPatientStatus(patient.status),
-  }));
+  if (index === -1) return { name: text, patientCode: "" };
+
+  return {
+    name: text.slice(0, index).trim(),
+    patientCode: text.slice(index + 3).trim(),
+  };
+};
+
+const plural = (value: number, unit: string) => `${value} ${unit}${value === 1 ? "" : "s"}`;
+
+// "7833 mins" -> "5 days", "1290 mins" -> "21 hours", "45 mins" -> "45 mins"
+const formatElapsed = (value?: string): string => {
+  const match = (value ?? "").match(/(\d+(?:\.\d+)?)\s*([a-z]*)/i);
+  if (!match) return "—";
+
+  const amount = Number(match[1]);
+  const unit = match[2].toLowerCase();
+
+  let minutes = amount;
+  if (unit.startsWith("h")) minutes = amount * 60;
+  else if (unit.startsWith("d")) minutes = amount * 1440;
+
+  if (minutes < 1) return "Just now";
+  if (minutes < 60) return plural(Math.floor(minutes), "min");
+  if (minutes < 1440) return plural(Math.floor(minutes / 60), "hour");
+  return plural(Math.floor(minutes / 1440), "day");
+};
+
+const mapPatients = (raw: DashboardApiResponse): DashboardPatient[] => {
+  const fullList = raw.patients?.length ? raw.patients : raw.data;
+
+  if (fullList?.length) {
+    const waitingById = new Map(
+      (raw.priorityPatients ?? []).map((p) => [p.id, p.waitingTime] as const)
+    );
+
+    return fullList.map((patient) => ({
+      id: patient.id,
+      name: patient.name ?? "Unnamed patient",
+      patientCode: patient.patientId ?? patient.patientCode ?? "",
+      recentActivity: formatElapsed(waitingById.get(patient.id) ?? patient.recentActivity),
+      status: normalizeDashboardPatientStatus(patient.status),
+    }));
+  }
+
+  // Current backend response only sends `priorityPatients`.
+  return (raw.priorityPatients ?? []).map((patient) => {
+    const { name, patientCode } = splitPatientIdentifier(patient.patientIdentifier);
+
+    return {
+      id: patient.id,
+      name: name || "Unnamed patient",
+      patientCode,
+      recentActivity: formatElapsed(patient.waitingTime),
+      status: normalizeDashboardPatientStatus(patient.status),
+    };
+  });
+};
+
+const normalizeDashboard = (raw: DashboardApiResponse, page: number): DashboardData => {
+  const metrics = raw.metrics;
+  const summary = raw.summary;
+
+  const totalPatients = num(metrics?.totalPatients) ?? num(summary?.totalPatients) ?? 0;
+  const needsAttention =
+    num(metrics?.needsAttentionPatients) ?? num(summary?.needsAttention) ?? 0;
+  const emergency = num(metrics?.emergencyPatients) ?? num(summary?.alerts) ?? 0;
+  const normal =
+    num(metrics?.normalPatients) ??
+    num(summary?.normal) ??
+    Math.max(totalPatients - needsAttention - emergency, 0);
+
+  const statusBreakdown: DashboardStatusBreakdown = metrics
+    ? { normal, needsAttention, emergency }
+    : {
+        normal: num(raw.statusBreakdown?.normal) ?? normal,
+        needsAttention: num(raw.statusBreakdown?.needsAttention) ?? needsAttention,
+        emergency: num(raw.statusBreakdown?.emergency) ?? emergency,
+      };
+
+  const patients = mapPatients(raw);
 
   const alertItems: DashboardAlert[] = (raw.alerts ?? []).map((alert) => ({
     id: alert.id,
@@ -130,14 +232,10 @@ const normalizeDashboard = (raw: DashboardApiResponse, page: number): DashboardD
     metrics: {
       totalPatientsMonitored: totalPatients,
       totalPatientsNeedingAttention: needsAttention,
-      totalEmergencyAlerts: alerts,
+      totalEmergencyAlerts: emergency,
     },
-    statusBreakdown: {
-      normal,
-      needsAttention,
-      emergency: alerts,
-    },
-    summary: { totalPatients, normal, needsAttention, alerts },
+    statusBreakdown,
+    summary: { totalPatients, normal, needsAttention, alerts: emergency },
     patients,
     alerts: alertItems,
     pagination: {
