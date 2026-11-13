@@ -9,9 +9,43 @@ import { isAdminRole } from "../auth/roles";
 const columns =
   "grid-cols-[minmax(0,1fr)_auto] sm:grid-cols-[minmax(0,2fr)_minmax(0,1.2fr)_minmax(0,1fr)_2rem]";
 
+const urgencyRank: Record<string, number> = {
+  emergency: 0,
+  "needs attention": 1,
+  normal: 2,
+};
+
+const minutesSinceActivity = (value?: string | null) => {
+  if (!value) return Number.POSITIVE_INFINITY;
+  if (/just now/i.test(value)) return 0;
+
+  const match = value.match(/(\d+)\s*(min|mins|minute|minutes|hr|hrs|hour|hours|day|days)/i);
+  if (!match) return Number.POSITIVE_INFINITY;
+
+  const n = parseInt(match[1], 10);
+  const unit = match[2].toLowerCase();
+  if (unit.startsWith("h")) return n * 60;
+  if (unit.startsWith("d")) return n * 60 * 24;
+  return n;
+};
+
+const comparePatients = (
+  a: { status: string; lastActivity: string },
+  b: { status: string; lastActivity: string }
+) => {
+  const byUrgency = (urgencyRank[a.status] ?? 3) - (urgencyRank[b.status] ?? 3);
+  if (byUrgency !== 0) return byUrgency;
+
+  const aMins = minutesSinceActivity(a.lastActivity);
+  const bMins = minutesSinceActivity(b.lastActivity);
+  if (aMins === bMins) return 0;
+  return aMins < bMins ? -1 : 1;
+};
+
 const PatientList = () => {
   const { patients, isLoading, hasError, reload } = usePatients();
   const isAdmin = isAdminRole(useAuthStore((state) => state.user?.role));
+  const sortedPatients = [...patients].sort(comparePatients);
 
  const formatLastActivity = (value?: string | null) => {
   if (!value) return "—";
@@ -92,7 +126,7 @@ const PatientList = () => {
               No patients to show yet.
             </p>
           ) : (
-            patients.map((patient) => (
+            sortedPatients.map((patient) => (
               <div
                 key={patient.id}
                 role="row"

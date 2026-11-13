@@ -150,7 +150,7 @@ const DraftEditor = ({ patient, event, patients, onPatientChange }: DraftEditorP
     setSaving("draft");
     try {
       if (noteText && noteText !== savedNotes.trim()) {
-        await addEventNote(patient.id, event.id, noteText);
+        await addEventNote( event.id, noteText);
         setSavedNotes(noteText);
       }
 

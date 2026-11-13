@@ -367,7 +367,7 @@ export const getPatientActivity = (id: string): Promise<ActivityEvent[]> =>
 export const getPatientEvent = (patientId: string, eventId: string): Promise<EventDetail> =>
   dedupeRequest(`event:${patientId}:${eventId}`, async () => {
     const res = await axiosPrivate.get<EventDetailResponse>(
-      `/patients/${encodeURIComponent(patientId)}/events/${encodeURIComponent(eventId)}`
+      `/patients/events/${encodeURIComponent(eventId)}`
     );
     return toEventDetail(res.data);
   });
@@ -380,9 +380,9 @@ export const getPatientHistory = (id: string): Promise<HistoryRecord[]> =>
     return (Array.isArray(res.data) ? res.data : []).map(toHistoryRecord);
   });
 
-export const addEventNote = async (patientId: string, eventId: string, note: string) => {
+export const addEventNote = async ( eventId: string, note: string) => {
   await axiosPrivate.post(
-    `/patients/${encodeURIComponent(patientId)}/events/${encodeURIComponent(eventId)}/note`,
+    `/patients/events/${encodeURIComponent(eventId)}/note`,
     { note }
   );
 };
