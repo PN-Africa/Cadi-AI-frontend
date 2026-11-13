@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { LucideArrowRight, LucideRefreshCw } from "lucide-react";
+import { LucideRefreshCw } from "lucide-react";
 import Loading from "../components/Loading";
 import { useRequest } from "../data/useRequest";
 import { getErrorMessage } from "../services/apiPatients";
