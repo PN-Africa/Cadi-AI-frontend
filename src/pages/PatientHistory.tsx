@@ -36,7 +36,7 @@ const selectClass =
 
 const PatientHistory = () => {
   const { patient } = useOutletContext<{ patient: Patient }>();
-  const [range, setRange] = useState<RangeFilter>("today");
+  const [range, setRange] = useState<RangeFilter>("week");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [newestFirst, setNewestFirst] = useState(true);
 

@@ -36,7 +36,7 @@ const isWithinRange = (iso: string, range: ActivityRange, now: Date) => {
 const PatientActivity = () => {
   const { patient } = useOutletContext<{ patient: Patient }>();
   const { events, isLoading, hasError, reload } = usePatientActivity(patient.id);
-  const [range, setRange] = useState<ActivityRange>("today");
+  const [range, setRange] = useState<ActivityRange>("week");
 
   const visibleEvents = useMemo(() => {
     const now = new Date();

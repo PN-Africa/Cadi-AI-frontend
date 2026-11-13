@@ -102,6 +102,11 @@ const Notifications = () => {
   //   ?? alerts.find((alert) => !alert.read);
 
   const openAlert = (alert: NotificationAlert) => {
+    navigate(
+      alert.eventId
+        ? `/patient/${alert.patientId}/activity/${encodeURIComponent(alert.eventId)}`
+        : `/patient/${alert.patientId}`
+    );
     setReadIds((ids) => (ids.includes(alert.id) ? ids : [...ids, alert.id]));
 
     if (!alert.patientId) {
@@ -109,11 +114,7 @@ const Notifications = () => {
       return;
     }
 
-    navigate(
-      alert.eventId
-        ? `/patient/${alert.patientId}/activity/${encodeURIComponent(alert.eventId)}`
-        : `/patient/${alert.patientId}`
-    );
+
   };
 
   return (
