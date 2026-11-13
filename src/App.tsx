@@ -187,16 +187,13 @@ const router = createBrowserRouter([
               { path: "/users", element: <Users /> },
               { path: "/users/new", element: <UserForm /> },
               { path: "/users/:id", element: <UserForm /> },
+              { path: "/tasks", element: <AssignTask /> },
               { path: "/tasks/professionals", element: <Professionals /> },
             ],
           },
           {
             path: "/drafts",
             element: <Drafts />,
-          },
-          {
-            path: "/tasks",
-            element: <AssignTask />
           },
           {
             path: "/notifications",

@@ -134,6 +134,15 @@ const DraftEditor = ({ patient, event, patients, onPatientChange }: DraftEditorP
       .filter(Boolean)
       .join("\n");
 
+  const buildDraftNotes = () =>
+    [
+      resolutionNote.trim(),
+      notes.trim(),
+      nextReview !== reviewOptions[0] ? `Next review: ${nextReview}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
+
   const handleSaveDraft = async () => {
     if (saving) return;
     if (!event) {
@@ -142,25 +151,24 @@ const DraftEditor = ({ patient, event, patients, onPatientChange }: DraftEditorP
     }
 
     const noteText = notes.trim();
-    if (!isHealthcare && !noteText) {
+    const draftNotes = buildDraftNotes();
+    if (isHealthcare ? !draftNotes : !noteText) {
       toast.error("Add a note before saving your draft.");
       return;
     }
 
     setSaving("draft");
     try {
-      if (noteText && noteText !== savedNotes.trim()) {
-        await addEventNote( event.id, noteText);
-        setSavedNotes(noteText);
-      }
-
       if (isHealthcare) {
-        await resolveEvent( event.id, {
+        await resolveEvent(event.id, {
           resolutionReason: resolutionStatus,
-          resolutionNotes: buildResolutionNotes(),
+          resolutionNotes: draftNotes,
           updatedPatientStatus: toApiStatus(patient.status),
           isDraft: true,
         });
+      } else if (noteText !== savedNotes.trim()) {
+        await addEventNote(event.id, noteText);
+        setSavedNotes(noteText);
       }
 
       setSavedAt(new Date().toISOString());

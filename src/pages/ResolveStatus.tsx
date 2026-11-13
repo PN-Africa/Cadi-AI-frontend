@@ -127,7 +127,7 @@ const ResolveStatus = () => {
 
     setIsSavingNote(true);
     try {
-      await addEventNote(patient.id, event.id, trimmed);
+      await addEventNote( event.id, trimmed);
       toast.success("Note saved");
       setNote("");
     } catch (error) {

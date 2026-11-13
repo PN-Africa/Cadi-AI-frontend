@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { LucideArrowLeft, LucideChevronDown, LucideClock } from "lucide-react";
-import { assignProfessional, getProfessionals, type Professional } from "../services/apiAdmin";
-import { formatEnum } from "../services/apiTasks";
+import { getProfessionals, type Professional } from "../services/apiAdmin";
+import { assignTask, formatEnum } from "../services/apiTasks";
 import { getErrorMessage } from "../services/apiPatients";
 import { useAuthStore } from "../auth/auth";
 import { isAdminRole } from "../auth/roles";
@@ -96,7 +96,14 @@ const Users = () => {
     setBusyId(p.id);
     setAssignError("");
     try {
-      await assignProfessional({ taskId, professionalId: p.id, assignmentMessage: `Assigned to ${p.name}.` });
+      await assignTask({
+        eventId: taskId,
+        taskType: "Follow-up verification",
+        assignToUserId: p.id,
+        priority: "HIGH",
+        dueBy: "45 mins",
+        assignmentMessage: `Assigned to ${p.name}.`,
+      });
       navigate("/tasks");
     } catch (e) {
       setAssignError(getErrorMessage(e, "Could not assign this professional. Please try again."));
